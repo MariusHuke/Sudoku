@@ -21,10 +21,29 @@ class Generation{
     }
 
     //print
-    void print(){
+    void print_values(){
         for(int i = 0; i < population.size(); i++){
             population[i].print();
         }
+    }
+
+    void print_fitness(){
+        for(int i = 0; i < fitness_sudokus.size(); i++){
+            fitness_sudokus[i].print();
+        }
+    }
+
+    //getters
+    std::vector<Sudoku> get_population(){
+        return population;
+    }
+
+    std::vector<Sudoku> get_fitness_sudokus(){
+        return fitness_sudokus;
+    }
+
+    void fitness(){
+        calculate_fitness();
     }
 
     private:
@@ -62,9 +81,36 @@ class Generation{
         }
     }
 
-    //TODO: implement fitness function
-    void calculate_fitness(Sudoku sudoku){
-
+    void calculate_fitness(){
+        for(int i = 0; i < population.size(); i++){
+            fitness_sudokus.push_back(Sudoku(population[i].get_row_representation().size()));
+            fitness_sums.push_back(0);
+            std::vector<std::vector<int*>> hashmap = std::vector<std::vector<int*>>(population[i].row_length,std::vector<int*>(0));
+            //rows
+            for(int ii = 0; ii < population[i].get_row_representation().size(); ii+=population[i].row_length){
+                for(int iii = 0; iii < population[i].row_length; iii++){
+                    hashmap[*(population[i].get_row_representation()[ii+iii])-1].push_back(fitness_sudokus[i].get_row_representation()[ii+iii]);
+                }
+                for (int iii = 0; iii < hashmap.size(); iii++){
+                    for(int iv = 0; iv < hashmap[iii].size(); iv++){
+                        *hashmap[iii][iv] += hashmap[iii].size();
+                        fitness_sums[i] += hashmap.size();
+                    }
+                }
+            }
+            //coloumns
+            for(int ii = 0; ii < population[i].row_length; ii++){
+                for(int iii = 0; iii < population[i].get_row_representation().size(); iii+=population[i].row_length){
+                    hashmap[*(population[i].get_row_representation()[ii+iii])-1].push_back(fitness_sudokus[i].get_row_representation()[ii+iii]);
+                }
+                for (int iii = 0; iii < hashmap.size(); iii++){
+                    for(int iv = 0; iv < hashmap[iii].size(); iv++){
+                        *hashmap[iii][iv] += hashmap[iii].size();
+                        fitness_sums[i] += hashmap.size();
+                    }
+                }
+            }
+        }
     }
     
     private:

@@ -11,8 +11,6 @@
 //class that takes a row representation and save it and the grid representation
 class Sudoku{
     private:
-    int row_length;
-    int segment_row_length;
     std::vector<int*> row_representation; //representations containing the unsolved sudoku
     std::vector<std::vector<int*>> grid_reprensentation;
 
@@ -35,6 +33,14 @@ class Sudoku{
         segment_row_length = 0;
         row_representation = std::vector<int*>(0);
         grid_reprensentation = std::vector<std::vector<int*>>(0,std::vector<int*>(0));
+    }
+
+    //construct empty sudoku with a given size
+    Sudoku(int size){
+        row_length = size;
+        segment_row_length = sqrt(size);
+        row_representation = std::vector<int*>(size, new int(0));
+        transform_to_grid(row_representation);
     }
 
     //Constructor transforming the row representation to the grid representation and saving everything
@@ -73,5 +79,9 @@ class Sudoku{
         }
         std::cout << "\n\n";
     }
+
+    public:
+    int row_length;
+    int segment_row_length;
 };
 #endif
