@@ -29,6 +29,7 @@ class Sudoku{
     public:
     //default Constructor
     Sudoku(){
+        size = 0;
         row_length = 0;
         segment_row_length = 0;
         row_representation = std::vector<int*>(0);
@@ -37,14 +38,19 @@ class Sudoku{
 
     //construct empty sudoku with a given size
     Sudoku(int size){
-        row_length = size;
-        segment_row_length = sqrt(size);
-        row_representation = std::vector<int*>(size, new int(0));
+        this->size = size;
+        row_length = sqrt(size);
+        segment_row_length = sqrt(row_length);
+        row_representation = std::vector<int*>(0);
+        for(int i = 0; i < size; i++){
+            row_representation.push_back(new int(0));
+        }
         transform_to_grid(row_representation);
     }
 
     //Constructor transforming the row representation to the grid representation and saving everything
     Sudoku(std::vector<int*> row_representation){
+        this->size = row_representation.size();
         this->row_representation = row_representation;
         this->row_length = sqrt(row_representation.size());
         this->segment_row_length = sqrt(row_length);
@@ -81,6 +87,7 @@ class Sudoku{
     }
 
     public:
+    int size;
     int row_length;
     int segment_row_length;
 };

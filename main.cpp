@@ -29,10 +29,14 @@ std::vector<Sudoku> readfiles(std::vector<std::string> input_paths, int number_o
 int main(){
     std::vector<std::string> input_paths= {"data/puzzles0_kaggle"}; //,"data/puzzles4_forum_hardest_1905"};
     std::vector<Sudoku> sudokus = readfiles(input_paths, 1);
-    Generation generation = Generation(sudokus[0],1);
+    Generation generation = Generation(sudokus[0],3);
     generation.print_values();
-    generation.fitness();
-    generation.print_fitness();
+    std::vector<Sudoku> children = generation.nparents_npoints_crossover(3);
+    for(int i = 0; i < children.size(); i++){
+        children[i].print();
+    }
+    /*generation.fitness();
+    generation.print_fitness();*/
     std::cout << "\n\n";
     return 1;
 }

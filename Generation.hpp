@@ -1,7 +1,7 @@
 #ifndef GENERATION_HPP
 #define GENERATION_HPP
 #include "Sudoku.hpp"
-
+#include <cassert>
 class Generation{
     public:
     //default constructor
@@ -46,6 +46,25 @@ class Generation{
         calculate_fitness();
     }
 
+    //crossovers are done at the borders or grid rows
+    std::vector<Sudoku> nparents_npoints_crossover(int n = 2){
+        assert(population_size%n==0);
+        assert((population[0].size/n)%(population[0].row_length)*(population[0].segment_row_length)==0); //check whether or not points can be set at borders
+        std::vector<Sudoku> children = {};
+        for(int i = 0; i < population_size; i+=n){ //iterate over population
+            for(int ii = 0; ii < n; ii++){ //initailize children by copying parents
+                children.push_back(Sudoku(population[i+ii].get_copy()));
+            }
+            for(int ii = 0; ii < n; ii++){ //iterate over children
+                for(int iii = 0; iii < n; iii++){ //iterate over parents
+                    for(int iv = ; iv < population[i+ii].size/n; iv++){
+                        *(children[ii].get_row_representation()[iii]) = *(population[i+ii].get_row_representation()[iii]);
+                    }
+                }
+            }
+        }
+        return children;
+    }
     private:
     //resets the list to a ordered list of all elements that can be set
     std::vector<int> reset_list(int size){
@@ -85,35 +104,36 @@ class Generation{
         for(int i = 0; i < population.size(); i++){
             fitness_sudokus.push_back(Sudoku(population[i].get_row_representation().size()));
             fitness_sums.push_back(0);
-            std::vector<std::vector<int*>> hashmap = std::vector<std::vector<int*>>(population[i].row_length,std::vector<int*>(0));
+            std::vector<std::vector<int*>> hashmap;
             //rows
             for(int ii = 0; ii < population[i].get_row_representation().size(); ii+=population[i].row_length){
+                hashmap = std::vector<std::vector<int*>>(population[i].row_length,std::vector<int*>(0));
                 for(int iii = 0; iii < population[i].row_length; iii++){
                     hashmap[*(population[i].get_row_representation()[ii+iii])-1].push_back(fitness_sudokus[i].get_row_representation()[ii+iii]);
                 }
                 for (int iii = 0; iii < hashmap.size(); iii++){
                     for(int iv = 0; iv < hashmap[iii].size(); iv++){
-                        *hashmap[iii][iv] += hashmap[iii].size();
-                        fitness_sums[i] += hashmap.size();
+                        *hashmap[iii][iv] += hashmap[iii].size()-1;
+                        fitness_sums[i] += hashmap[iii].size()-1;
                     }
                 }
             }
             //coloumns
             for(int ii = 0; ii < population[i].row_length; ii++){
+                hashmap = std::vector<std::vector<int*>>(population[i].row_length,std::vector<int*>(0));
                 for(int iii = 0; iii < population[i].get_row_representation().size(); iii+=population[i].row_length){
                     hashmap[*(population[i].get_row_representation()[ii+iii])-1].push_back(fitness_sudokus[i].get_row_representation()[ii+iii]);
                 }
                 for (int iii = 0; iii < hashmap.size(); iii++){
                     for(int iv = 0; iv < hashmap[iii].size(); iv++){
-                        *hashmap[iii][iv] += hashmap[iii].size();
-                        fitness_sums[i] += hashmap.size();
+                        *hashmap[iii][iv] += hashmap[iii].size()-1;
+                        fitness_sums[i] += hashmap.size()-1;
                     }
                 }
             }
         }
     }
-    
-    private:
+
     Sudoku original;
     std::vector<int> fitness_sums;
     std::vector<Sudoku> fitness_sudokus; //representation of fitness values for each individual is the same
