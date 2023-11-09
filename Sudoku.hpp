@@ -7,20 +7,21 @@
 #include<math.h>
 #include<random>
 #include<algorithm>
+#include <memory>
 
 //class that takes a row representation and save it and the grid representation
+template <typename T>
 class Sudoku{
     private:
-    std::vector<int*> row_representation; //representations containing the unsolved sudoku
-    std::vector<std::vector<int*>> grid_reprensentation;
 
     //transforms the row representation to the grid representation
-    void transform_to_grid(std::vector<int*> input){
-        grid_reprensentation = std::vector<std::vector<int*>>(row_length,std::vector<int*>(0));
+    void transform_to_grid(std::vector<std::shared_ptr<T>> input){
+        grid_reprensentation = std::vector<std::vector<std::shared_ptr<T>>>(row_length,std::vector<std::shared_ptr<T>>(row_length));
         for(int i = 0; i < input.size()/row_length; i++){ //iterating over the rows
             for(int ii = 0; ii < row_length/segment_row_length; ii++){ //iterating over the segments in the rows 
                 for(int iii = 0; iii < segment_row_length; iii++){ //iterating over the elements of the segments
-                    grid_reprensentation[ii+floor(i/segment_row_length)*segment_row_length].push_back(input[i*row_length+ii*segment_row_length+iii]);
+                    grid_reprensentation[ii+floor(i/segment_row_length)*segment_row_length][iii+(i%segment_row_length)*segment_row_length]
+                    = input[i*row_length+ii*segment_row_length+iii];
                 }
             }
         }
@@ -28,53 +29,59 @@ class Sudoku{
 
     public:
     //default Constructor
-    Sudoku(){
+    Sudoku<T>(){
         size = 0;
         row_length = 0;
         segment_row_length = 0;
-        row_representation = std::vector<int*>(0);
-        grid_reprensentation = std::vector<std::vector<int*>>(0,std::vector<int*>(0));
+        row_representation = std::vector<std::shared_ptr<T>>(0);
+        grid_reprensentation = std::vector<std::vector<std::shared_ptr<T>>>(0,std::vector<std::shared_ptr<T>>(0));
     }
 
     //construct empty sudoku with a given size
-    Sudoku(int size){
+    Sudoku<T>(int size){
         this->size = size;
         row_length = sqrt(size);
         segment_row_length = sqrt(row_length);
-        row_representation = std::vector<int*>(0);
+        row_representation = std::vector<std::shared_ptr<T>>(0);
         for(int i = 0; i < size; i++){
-            row_representation.push_back(new int(0));
+            row_representation.push_back(std::make_shared<T>(0));
         }
         transform_to_grid(row_representation);
     }
 
     //Constructor transforming the row representation to the grid representation and saving everything
-    Sudoku(std::vector<int*> row_representation){
+    Sudoku<T>(std::vector<T> row_representation){
         this->size = row_representation.size();
-        this->row_representation = row_representation;
+        this->row_representation.clear();
+        for(int i = 0; i < row_representation.size(); i++){
+            this->row_representation.push_back(std::make_shared<T>(row_representation[i]));
+        }
         this->row_length = sqrt(row_representation.size());
         this->segment_row_length = sqrt(row_length);
-        transform_to_grid(row_representation);
+        transform_to_grid(this->row_representation);
     }
 
-    //copy by value
-    Sudoku get_copy(){
-        std::vector<int*> row_rep;
-        for(auto it = row_representation.begin(); it != row_representation.end(); it++){
-            row_rep.push_back(new int(**it));
+    //copy constructor
+    Sudoku& operator=(const Sudoku& other){
+        if (this != &other) {
+            // Deep copy row_representation by using the constructor above
+            row_representation = std::vector<std::shared_ptr<T>>(0);
+            for (const auto& element : other.row_representation) {
+                if (element) {
+                    row_representation.push_back(std::make_shared<T>(*element));
+                } else {
+                    row_representation.push_back(nullptr);
+                }
+            }
         }
-        return Sudoku(row_rep);
+        size = other.size;
+        row_length = other.row_length;
+        segment_row_length = other.segment_row_length;
+        transform_to_grid(row_representation);
+        return *this;
     }
 
-    //getters
-    std::vector<int*> get_row_representation(){
-        return row_representation;
-    }
-    std::vector<std::vector<int*>> get_grid_representation(){
-        return grid_reprensentation;
-    }
-
-    //print
+    //printing the row representation with borders
     void print(){
         std::string horizontal_line = std::string(row_length*2+segment_row_length,'-');
         for(int i = 0; i < row_representation.size(); i++){
@@ -87,6 +94,8 @@ class Sudoku{
     }
 
     public:
+    std::vector<std::shared_ptr<T>> row_representation; //representations containing the unsolved sudoku
+    std::vector<std::vector<std::shared_ptr<T>>> grid_reprensentation;
     int size;
     int row_length;
     int segment_row_length;
