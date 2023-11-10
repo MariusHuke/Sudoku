@@ -7,7 +7,6 @@ std::vector<Sudoku<int>> readfiles(std::vector<std::string> input_paths, int num
     std::fstream fstream;
     std::string tp;
     std::vector<Sudoku<int>> sudokus;
-    
     for(int i = 0; i < input_paths.size();i++){
         fstream.open(input_paths[i],std::ios::in);
         int howmany = 0;
@@ -19,7 +18,7 @@ std::vector<Sudoku<int>> readfiles(std::vector<std::string> input_paths, int num
                 if(tp[ii]=='.' || tp[ii]=='0') tmp.push_back(0);
                 else tmp.push_back((tp[ii]-'0'));
             }
-            sudokus.push_back(Sudoku(tmp));
+            sudokus.push_back(Sudoku<int>(tmp));
             howmany++;
             if(howmany > number_of_sudokus) break;
         }
@@ -29,21 +28,21 @@ std::vector<Sudoku<int>> readfiles(std::vector<std::string> input_paths, int num
 }
 
 int main(){
-    std::vector<std::string> input_paths= {"data/minemedium"}; //,data/puzzles0_kaggle"data/puzzles4_forum_hardest_1905"};
+    std::vector<std::string> input_paths= {"data/puzzles0_kaggle"}; //,data/puzzles0_kaggle"data/puzzles4_forum_hardest_1905"};
     std::vector<Sudoku<int>> sudokus = readfiles(input_paths, 1);
     //initialize
-    Generation generation = Generation(sudokus[0],50);
-    /*generation.fitness(true);
+    Generation generation = Generation(sudokus[0],2);
+    generation.fitness(true);
     generation.print_value(0);
     generation.print_fitness(0);
-    generation.mutate(false);
+    /*generation.mutate(false);
     generation.fitness(true);
     generation.print_value(0);
     generation.print_fitness(0);*/
     /*generation.roulette_wheel_selection(20);
     generation.mutate(true);
     generation.print_value(0);*/
-    generation.fitness(true);
+    /*generation.fitness(true);
     std::vector<float> fitness = generation.get_fitness();
     auto best = std::min_element(fitness.begin(), fitness.end());
     int bestindex = std::distance(fitness.begin(), best);
@@ -77,7 +76,7 @@ int main(){
             generation.fitness(true);
         }
     }
-    generation.print_value(bestindex);
+    generation.print_value(bestindex);*/
 
     return 1;
 }
