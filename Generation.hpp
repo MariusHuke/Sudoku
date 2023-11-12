@@ -31,7 +31,7 @@ public:
         }
         std::cout << "Generation initialized with " << population_size << " elements\nSudoku:\n";
         sudoku.print();
-        initialize_smart();
+        initialize_random();
     }
 
     //print all Sudokus of this Generation
@@ -73,11 +73,17 @@ public:
     }
 
     //print best individual 
-    void print_best(){
+    bool print_best(){
+        float avg = 0;
+        for(auto it = fitness_sums.begin();it != fitness_sums.end();it++){
+            avg += *it;
+        }
+        avg /= fitness_sums.size();
         auto best = std::min_element(fitness_sums.begin(), fitness_sums.end());
         int bestindex = std::distance(fitness_sums.begin(), best);
         float bestvalue = *best;
-        std::cout << bestvalue << " at: " << bestindex << "\n";
+        std::cout << bestvalue << " at: " << bestindex << " with average:" << avg << "\n";
+        return bestvalue == 0;
     }
 
     //calculate fitness (bool decides method)
@@ -231,6 +237,7 @@ private:
         }
         population_size = population.size();
     }
+
     // resets the list to a ordered list of all elements that can be set
     std::vector<float> reset_list(int size)
     {
@@ -272,9 +279,8 @@ private:
         }
     }
 
-    //initialization also takes row collision as a factor
+    //initialization also takes row/coloumn collision as a factor
     // which pair of collision is choose randomly between checkrow && (checkcoloumn || checkgrid)
-    //1. random start position in line where i start to add 
     void initialize_smart(){
         // create random number generator
         std::random_device rd;
@@ -283,19 +289,25 @@ private:
         for (auto it = population.begin(); it != population.end(); it++){ //iterate over population
             bool horizontal = dist(gen);
             std::vector<std::vector<std::shared_ptr<int>>> grid = it->grid_representation;
+            std::vector<float> gridlist = reset_list(grid.size());
             for (int i = 0; i < grid.size(); i++){ //iterate over subgrids
+                //chose a random element from grid
+                std::uniform_int_distribution<int> griddist(0, gridlist.size()-1);
+                int gridpos = griddist(gen);
+                int gridposvalue = gridlist[gridpos]-1;
+                gridlist.erase(gridlist.begin()+gridpos);
                 std::vector<std::vector<int>> possibles = std::vector<std::vector<int>>(it->segment_row_length, std::vector<int>(0));
                 std::vector<std::vector<int>> how_common = std::vector<std::vector<int>>(it->segment_row_length,std::vector<int>(it->row_length, 0));
                 //find possibles for each row of the grid
                 for (int ii = 0; ii < possibles.size(); ii++){ //iterate over rows of subgrid
                     for(int iii = 0; iii < it->row_length; iii++){ //possible elements for the row
-                        if(checkrow(*it, ii+it->segment_row_length*(i/it->segment_row_length), iii+1) && horizontal && checkgrid(*it, i, iii+1)){
+                        if(checkrow(*it, ii+it->segment_row_length*(gridposvalue/it->segment_row_length), iii+1) && horizontal && checkgrid(*it, gridposvalue, iii+1)){
                             possibles[ii].push_back(iii+1);
                             for(int iv = 0; iv < it->segment_row_length; iv++){
                                 if(iv != ii) how_common[iv][iii]++;
                             }
                         }
-                        else if (checkcoloumn(*it, ii+(i%it->segment_row_length)*it->segment_row_length, iii+1) && !horizontal && checkgrid(*it, i, iii+1)){
+                        else if (checkcoloumn(*it, ii+(gridposvalue%it->segment_row_length)*it->segment_row_length, iii+1) && !horizontal && checkgrid(*it, gridposvalue, iii+1)){
                             possibles[ii].push_back(iii+1);
                             for(int iv = 0; iv < it->segment_row_length; iv++){
                                 if(iv != ii) how_common[iv][iii]++;
@@ -314,7 +326,7 @@ private:
                 std::uniform_int_distribution<int> startdist(0, it->segment_row_length-1);
                 int insertstart = startdist(gen);
                 //fill grid with possibles
-                for (int ii = 0; ii < grid[i].size(); ii++){
+                for (int ii = 0; ii < grid[gridposvalue].size(); ii++){
                     //find smallest possibles
                     int size = std::numeric_limits<int>::max();
                     int pos = 0;
@@ -327,7 +339,8 @@ private:
                     }
                     //fill grid with one element
                     if(horizontal){
-                        while(*(grid[i][pos*it->segment_row_length+((first[pos]+insertstart)%it->segment_row_length)]) != 0){
+                        if(possibles[pos].size() == 0) continue;
+                        while(*(grid[gridposvalue][pos*it->segment_row_length+((first[pos]+insertstart)%it->segment_row_length)]) != 0){
                             first[pos]++;
                             if(first[pos] == it->segment_row_length){
                                 possibles[pos] = std::vector<int>(0);
@@ -336,14 +349,15 @@ private:
                         }
                         if(first[pos] == it->segment_row_length) continue;
                         //put into first pos
-                        *(grid[i][pos*it->segment_row_length+((first[pos]+insertstart)%it->segment_row_length)]) = possibles[pos][0];
+                        *(grid[gridposvalue][pos*it->segment_row_length+((first[pos]+insertstart)%it->segment_row_length)]) = possibles[pos][0];
                         //erase used number from all possibles
                         for(int iii = 0; iii < possibles.size(); iii++){
-                            possibles[iii].erase(std::remove(possibles[iii].begin(), possibles[iii].end(), *(grid[i][pos*it->segment_row_length+((first[pos]+insertstart)%it->segment_row_length)])), possibles[iii].end());
+                            possibles[iii].erase(std::remove(possibles[iii].begin(), possibles[iii].end(), *(grid[gridposvalue][pos*it->segment_row_length+((first[pos]+insertstart)%it->segment_row_length)])), possibles[iii].end());
                         }
                     }
                     else{
-                        while(*(grid[i][((first[pos]+insertstart)%it->segment_row_length)*it->segment_row_length+pos]) != 0){
+                        if(possibles[pos].size() == 0) continue;
+                        while(*(grid[gridposvalue][((first[pos]+insertstart)%it->segment_row_length)*it->segment_row_length+pos]) != 0){
                             first[pos]++;
                             if(first[pos] == it->segment_row_length){
                                 possibles[pos] = std::vector<int>(0);
@@ -352,19 +366,19 @@ private:
                         }
                         if(first[pos] == it->segment_row_length) continue;
                         //put into first pos
-                        *(grid[i][((first[pos]+insertstart)%it->segment_row_length)*it->segment_row_length+pos]) = possibles[pos][0];
+                        *(grid[gridposvalue][((first[pos]+insertstart)%it->segment_row_length)*it->segment_row_length+pos]) = possibles[pos][0];
                         //erase used number from all possibles 
                         for(int iii = 0; iii < possibles.size(); iii++){
-                            possibles[iii].erase(std::remove(possibles[iii].begin(), possibles[iii].end(), *(grid[i][((first[pos]+insertstart)%it->segment_row_length)*it->segment_row_length+pos])), possibles[iii].end());
+                            possibles[iii].erase(std::remove(possibles[iii].begin(), possibles[iii].end(), *(grid[gridposvalue][((first[pos]+insertstart)%it->segment_row_length)*it->segment_row_length+pos])), possibles[iii].end());
                         }
                     }
                 }
                 //fill leftovers (collides with row, but is rare)
                 for(int ii = 0; ii < grid.size();ii++){
-                    if(*(grid[i][ii]) == 0){
+                    if(*(grid[gridposvalue][ii]) == 0){
                         for(int iii = 1; iii < 10; iii++){
-                            if(checkgrid(*it, i, iii)){
-                                *(grid[i][ii]) = iii;
+                            if(checkgrid(*it, gridposvalue, iii)){
+                                *(grid[gridposvalue][ii]) = iii;
                                 break;
                             }
                         }
@@ -437,13 +451,19 @@ private:
             }
 
             for(int ii = 0; ii < population[i].row_length;ii++){
-                rowsum[ii] = (rowsum[ii] - minrowsum) / (maxrowsum - minrowsum);
-                rowproduct[ii] = (rowproduct[ii] - minrowproduct) / (maxrowproduct - minrowproduct);
-                rowmissingvalues[ii] = (rowmissing[ii].size() - minrowmissing) / (maxrowmissing - minrowmissing);
+                if(maxrowsum == minrowsum) rowsum[ii] = 0;
+                else rowsum[ii] = (rowsum[ii] - minrowsum) / (maxrowsum - minrowsum);
+                if(maxrowproduct == minrowproduct) rowproduct[ii] = 0;
+                else rowproduct[ii] = (rowproduct[ii] - minrowproduct) / (maxrowproduct - minrowproduct);
+                if(maxrowmissing == minrowmissing) rowmissingvalues[ii] = 0;
+                else rowmissingvalues[ii] = (rowmissing[ii].size() - minrowmissing) / (maxrowmissing - minrowmissing);
 
-                coloumnsum[ii] = (coloumnsum[ii] - mincoloumnsum) / (maxcoloumnsum - mincoloumnsum);
-                coloumnproduct[ii] = (coloumnproduct[ii] - mincoloumnproduct) / (maxcoloumnproduct - mincoloumnproduct);
-                coloumnmissingvalues[ii] = (coloumnmissing[ii].size() - mincoloumnmissing) / (maxcoloumnmissing - mincoloumnmissing);
+                if(maxcoloumnsum == mincoloumnsum) coloumnsum[ii] = 0;
+                else coloumnsum[ii] = (coloumnsum[ii] - mincoloumnsum) / (maxcoloumnsum - mincoloumnsum);
+                if(maxcoloumnproduct == mincoloumnproduct) coloumnproduct[ii] = 0;
+                else coloumnproduct[ii] = (coloumnproduct[ii] - mincoloumnproduct) / (maxcoloumnproduct - mincoloumnproduct);
+                if(maxcoloumnmissing == mincoloumnmissing) coloumnmissingvalues[ii] = 0;
+                else coloumnmissingvalues[ii] = (coloumnmissing[ii].size() - mincoloumnmissing) / (maxcoloumnmissing - mincoloumnmissing);
             }
 
             for(int ii = 0; ii < population[i].row_representation.size(); ii++){
@@ -451,19 +471,10 @@ private:
                 int coloumn = ii%population[i].row_length;
                 float tmp = 0;
                 tmp += rowsum[row] + coloumnsum[coloumn] + rowproduct[row] + coloumnproduct[coloumn] + rowmissingvalues[row] + coloumnmissingvalues[coloumn];
-                *fitness_sudokus[i].row_representation[ii] += tmp;
+                *fitness_sudokus[i].row_representation[ii] += (tmp > 3);
                 sum += tmp;
             }
             fitness_sums.push_back(sum);
-            //calculate fitness sums of grids
-            std::vector<float> gridsum = std::vector<float>(0);
-            for(int ii = 0; ii < population[i].row_length;ii++){ //iterate over grids
-                sum = 0;
-                for(int iii = 0; iii < population[i].row_length; iii++){ //iterate over elements of grids
-                    sum += *(fitness_sudokus[i].grid_representation[ii][iii]);
-                }
-                gridsum.push_back(sum);
-            }
         }
     }
 
@@ -509,7 +520,7 @@ private:
                     for (int iv = 0; iv < hashmap[iii].size(); iv++)
                     {
                         *hashmap[iii][iv] += (hashmap[iii].size()) > 1;
-                        sum += (hashmap[iii].size() > 1);
+                        sum += (hashmap[iii].size() > 1)*10;
                     }
                 }
             }
@@ -581,22 +592,6 @@ private:
         return true; 
     }
 
-    //pick a random element and only switch it if the position really works
-    /*void strict_mutation(int mutation_rate){
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<int> dist(0, 100);
-        for(int  i = 0; i < population_size;i++){ //iterate over population
-            for(auto it = population[i].get_grid_representaion().begin(); it != population[i].get_grid_representaion().end()){ //iterate over grids
-                for(auto itt = it->begin(); itt != it->end(); itt++){ //iterate over elements of grids
-                    if(*(original.grid_representation[i][ii]) != 0) continue;
-                    if(){ //fitness are values between 0 and 6 so *16,6 == between 0 and 100
-                        *(itt) = dist(rd);
-                    }
-                }
-            }
-        }
-    }*/
     // randomly choose and swap elements that have a fitness_value higher than zero
     void collision_mutation()
     {
@@ -611,15 +606,13 @@ private:
             for (int ii = 0; ii < population[parentpos].row_length; ii++)
             { // iterate over grids
                 std::vector<int> swaps = {};
-                int rate = 100;
-                if(dist(rd) < 50) rate = 0;
                 for (int iii = 0; iii < population[parentpos].row_length; iii++)
                 { // iterate over elements of grids
                     if (*(original.grid_representation[ii][iii]) != 0)
                     {
                         *(mutation.grid_representation[ii][iii]) = *(original.grid_representation[ii][iii]);
                     }
-                    else if (dist(rd) < 10 || dist(rd) < *(fitness_sudokus[parentpos].grid_representation[ii][iii])*50) //fitness are values between 0 and 6 so *16,6 == between 0 and 100
+                    else if (dist(rd) < *(fitness_sudokus[parentpos].grid_representation[ii][iii])*100) //fitness are values between 0 and 6 so *16,6 == between 0 and 100
                     {
                         swaps.push_back(iii);
                     }
@@ -676,7 +669,7 @@ private:
                         }
                         else if (list[ii / population[i].segment_row_length] - 1 == iii && horizontal)
                         { // choose the grid to swap for the coloumn of grids
-                            if (*(fitness_sudokus[parentpos].grid_representation[ii + iii][iv]) > 0)
+                            if ((int)*(fitness_sudokus[parentpos].grid_representation[ii + iii][iv])%10 > 0)
                             {
                                 swaps.push_back(iv);
                             }
@@ -687,7 +680,7 @@ private:
                         }
                         else if (list[iii] - 1 == ii / population[i].segment_row_length && !horizontal)
                         {
-                            if (*(fitness_sudokus[parentpos].grid_representation[ii + iii][iv]) > 0)
+                            if ((int)*(fitness_sudokus[parentpos].grid_representation[ii + iii][iv])/10 > 0)
                             {
                                 swaps.push_back(iv);
                             }

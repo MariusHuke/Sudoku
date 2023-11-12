@@ -1,6 +1,7 @@
 #include "Generation.hpp"
 #include "Sudoku.hpp"
-
+#include<string>
+#include<iostream>
 //https://github.com/chinyan/Genetic-Algorithm-based-Sudoku-Solver/blob/master/GA_Sudoku_Solver.py#L394
 //read in the sudoku from a given vector of paths
 std::vector<Sudoku<int>> readfiles(std::vector<std::string> input_paths, int number_of_sudokus){
@@ -27,56 +28,62 @@ std::vector<Sudoku<int>> readfiles(std::vector<std::string> input_paths, int num
     return sudokus;
 }
 
-int main(){
-    std::vector<std::string> input_paths= {"data/puzzles0_kaggle"}; //,data/puzzles0_kaggle"data/puzzles4_forum_hardest_1905"};
-    std::vector<Sudoku<int>> sudokus = readfiles(input_paths, 1);
-    //initialize
-    Generation generation = Generation(sudokus[0],2);
-    generation.fitness(true);
-    generation.print_value(0);
-    generation.print_fitness(0);
-    /*generation.mutate(false);
-    generation.fitness(true);
-    generation.print_value(0);
-    generation.print_fitness(0);*/
-    /*generation.roulette_wheel_selection(20);
-    generation.mutate(true);
-    generation.print_value(0);*/
-    /*generation.fitness(true);
-    std::vector<float> fitness = generation.get_fitness();
-    auto best = std::min_element(fitness.begin(), fitness.end());
-    int bestindex = std::distance(fitness.begin(), best);
-    int bestvalue = *best;
-    int i = 0;
-    int selection = 20;
-    bool fitnessval = true;
-    while(bestvalue!=0){
-        std::cout << "Generation" << i++ << "\n";
-        generation.two_point_crossover();
-        generation.fitness(fitnessval); //todo: make a fitnes function that just initialzes with 0
-        generation.punish_same();
-
-        //std::cout << bestvalue << " at: " << bestindex << "\n";
-        generation.selection(50);
-        generation.mutate(false);
-        generation.fitness(fitnessval); //the first few off the "sames" cant be punished
-        fitness = generation.get_fitness();
-        best = std::min_element(fitness.begin(), fitness.end());
-        bestindex = std::distance(fitness.begin(), best);
-        bestvalue = *best;
-        //std::cout << bestvalue << " at: " << bestindex << "\n";
-        if (i%10 == 0){
-            generation.print_value(bestindex);
-            generation.print_fitness(bestindex);
-            std::cout << bestvalue << " at: " << bestindex << "\n";
-        } 
-        if (i == 2000){
-            generation = Generation(sudokus[0],20);
-            i = 0;
-            generation.fitness(true);
+std::vector<Sudoku<int>> readfiles25(std::vector<std::string> input_paths, int number_of_sudokus){
+    std::fstream fstream;
+    std::string tp;
+    std::vector<Sudoku<int>> sudokus;
+    for(int i = 0; i < input_paths.size();i++){
+        fstream.open(input_paths[i],std::ios::in);
+        int howmany = 0;
+        std::string tmpstring;
+        while(getline(fstream,tp)){
+            std::vector<int> tmp = {};
+            if (tp[0] == '#') continue; 
+            for(int ii = 0; ii < tp.length(); ii++){
+                if(tp[ii]==' '){
+                    tmp.push_back(std::stoi(tmpstring));
+                    tmpstring.clear();
+                }
+                else{
+                    tmpstring += tp[ii];
+                }
+            }
+            tmp.push_back(std::stoi(tmpstring));
+            sudokus.push_back(Sudoku<int>(tmp));
+            howmany++;
+            if(howmany > number_of_sudokus) break;
         }
+        fstream.close();
     }
-    generation.print_value(bestindex);*/
+    return sudokus;
+}
 
+int main(){
+    std::vector<std::string> input_paths= {"25x25"}; //,data/puzzles0_kaggle"data/puzzles4_forum_hardest_1905"};
+    std::vector<Sudoku<int>> sudokus = readfiles25(input_paths, 1);
+    //initialize
+    std::vector<int> results = {};  
+    for(int i = 0; i < sudokus.size(); i++){
+        int ii = 0;
+        Generation generation = Generation(sudokus[i],25);
+        generation.fitness(true);
+        while(!generation.print_best()){
+            std::cout << "Generation" << ii++ << "\n";
+            generation.diagonal_crossover();
+            generation.fitness(true);
+            //generation.punish_same(20);
+            generation.selection(50,false);
+            generation.mutate(true);
+            generation.fitness(true);
+            if (i == 200){
+                results.push_back(-1);
+                break;
+            }
+        }
+        results.push_back(ii);
+    }
+    for (int i = 0; i < results.size(); i++){
+        std::cout << results[i] << " ";
+    }
     return 1;
 }
