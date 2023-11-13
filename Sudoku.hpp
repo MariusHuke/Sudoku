@@ -12,22 +12,12 @@
 //class that takes a row representation and save it and the grid representation
 template <typename T>
 class Sudoku{
-    private:
-
-    //transforms the row representation to the grid representation
-    void transform_to_grid(std::vector<std::shared_ptr<T>> input){
-        grid_representation = std::vector<std::vector<std::shared_ptr<T>>>(row_length,std::vector<std::shared_ptr<T>>(row_length));
-        for(int i = 0; i < input.size()/row_length; i++){ //iterating over the rows
-            for(int ii = 0; ii < row_length/segment_row_length; ii++){ //iterating over the segments in the rows 
-                for(int iii = 0; iii < segment_row_length; iii++){ //iterating over the elements of the segments
-                    grid_representation[ii+floor(i/segment_row_length)*segment_row_length][iii+(i%segment_row_length)*segment_row_length]
-                    = input[i*row_length+ii*segment_row_length+iii];
-                }
-            }
-        }
-    }
-
-    public:
+public:
+    std::vector<std::shared_ptr<T>> row_representation; //representations containing the unsolved sudoku
+    std::vector<std::vector<std::shared_ptr<T>>> grid_representation;
+    int size;
+    int row_length;
+    int segment_row_length;
     //default Constructor
     Sudoku<T>(){
         size = 0;
@@ -110,11 +100,19 @@ class Sudoku{
         std::cout << "\n\n";
     }
 
-    public:
-    std::vector<std::shared_ptr<T>> row_representation; //representations containing the unsolved sudoku
-    std::vector<std::vector<std::shared_ptr<T>>> grid_representation;
-    int size;
-    int row_length;
-    int segment_row_length;
+private:
+    //transforms the row representation to the grid representation
+    void transform_to_grid(std::vector<std::shared_ptr<T>> input){
+        grid_representation = std::vector<std::vector<std::shared_ptr<T>>>(row_length,std::vector<std::shared_ptr<T>>(row_length));
+        for(int i = 0; i < input.size()/row_length; i++){ //iterating over the rows
+            for(int ii = 0; ii < row_length/segment_row_length; ii++){ //iterating over the segments in the rows 
+                for(int iii = 0; iii < segment_row_length; iii++){ //iterating over the elements of the segments
+                    grid_representation[ii+floor(i/segment_row_length)*segment_row_length][iii+(i%segment_row_length)*segment_row_length]
+                    = input[i*row_length+ii*segment_row_length+iii];
+                }
+            }
+        }
+    }
+
 };
 #endif
