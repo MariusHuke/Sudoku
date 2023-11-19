@@ -64,33 +64,40 @@ std::vector<Sudoku<int>> readfiles25(std::vector<std::string> input_paths, int n
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //testcase using two_point_crossover, collision_fitness and stochastic_universal_sampling
-void testcase(std::vector<Sudoku<int>> sudokus, int population_size, int selection_rate, int maximum_generations){
+void testcase(std::vector<Sudoku<int>> sudokus, int population_size, int selection_rate, int mutation_rate){
     std::vector<int> numbergens = {};
     std::vector<int> elapsedtime = {};
-    bool stop;
+    float lastbest;
+    int failedgens;
     for(int i = 0; i < sudokus.size(); i++){
         int generations = 0;
-        stop = false;
+        lastbest = std::numeric_limits<float>::max();
+        failedgens = 0;
         auto start = std::chrono::high_resolution_clock::now();
         Generation generation = Generation(sudokus[i],population_size);
         generation.fitness(true);
         while(true){
-            generation.mutate();
-            generation.crossover(false); //two_point_crossover
+            generation.mutate(mutation_rate);
+            generation.crossover(true); //two_point_crossover
             generation.fitness(true); //collision_fitness
             generation.selection(selection_rate,false); //stochastic_universal_sampling
             generations++;
-            stop = generation.stop();
-            if (stop == 2){
-                generations = -1;
-                break;
+            float bestvalue = generation.get_best();
+            if (bestvalue >= lastbest){ 
+                if(failedgens++ > 25){
+                    generations = -1;
+                    break;
+                }
             }
-            if (stop == 1){
+            lastbest = bestvalue;
+            failedgens = 0;
+            if (bestvalue == 0){ //if solution is found
                 break;
             }
         }
-        auto stop = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop-start);
+        auto stopclock = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stopclock-start);
+        std::cout << "Sudoku " << i << " solved in " << generations << " generations and " << duration.count() << " milliseconds" << std::endl;
         numbergens.push_back(generations);
         elapsedtime.push_back(duration.count());
     }
@@ -100,30 +107,9 @@ void testcase(std::vector<Sudoku<int>> sudokus, int population_size, int selecti
 }
 
 int main(){
-    std::vector<std::string> input_paths= {"mydata/testdata"}; //,data/puzzles0_kaggle"data/puzzles4_forum_hardest_1905"};
-    std::vector<Sudoku<int>> sudokus = readfiles(input_paths, 40); //10*(easy,medium,hard,expert)
-    testcase(sudokus, 10, 20, 200);
+    std::vector<std::string> input_paths= {"data/testdata"}; //,data/puzzles0_kaggle"data/puzzles4_forum_hardest_1905"};
+    std::vector<Sudoku<int>> sudokus = readfiles(input_paths, 30); //10*(easy,medium,hard,expert)
+    testcase(sudokus, 1002, 20, 100);
     std::cout << "\n\n";
-    testcase(sudokus, 100, 20, 200);
-    std::cout << "\n\n";
-    testcase(sudokus, 1000, 20, 200);
-    std::cout << "\n\n";
-    testcase(sudokus, 10000, 20, 200);
-    std::cout << "\n\n";
-    testcase(sudokus, 10, 20, 200);
-    std::cout << "\n\n";
-    testcase(sudokus, 100, 50, 200);
-    std::cout << "\n\n";
-    testcase(sudokus, 1000, 50, 200);
-    std::cout << "\n\n";
-    testcase(sudokus, 10000, 50, 200);
-    std::cout << "\n\n";
-    testcase(sudokus, 10, 20, 200);
-    std::cout << "\n\n";
-    testcase(sudokus, 100, 80, 200);
-    std::cout << "\n\n";
-    testcase(sudokus, 1000, 80, 200);
-    std::cout << "\n\n";
-    testcase(sudokus, 10000, 80, 200);
     return 1;
 }

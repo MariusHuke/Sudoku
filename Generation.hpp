@@ -4,7 +4,6 @@
 #include <cassert>
 #include <memory>
 #include <cmath>
-#include <omp.h>
 
 class Generation
 {
@@ -30,7 +29,6 @@ public:
             this->population.push_back(Sudoku<int>(sudoku));
             this->fitness_sudokus.push_back(Sudoku<float>(sudoku.size));
         }
-        sudoku.print();
 	    if(which) initialize_random();
 	    else initialize_smart();
     }
@@ -91,23 +89,21 @@ public:
         return 0;
     }
 
-    //stop if average == best (cause that is a local minimum)
-    //0 == dont stop, 1 == 0 reached, 2 == local minimum reached
+    //return best fitness values of the generation
+    float get_best(){
+        auto best = std::min_element(fitness_sums.begin(), fitness_sums.end());
+        return *best;
+    }
+
+    //check if average == best (cause that is a local minimum)
+    //0 == dont stop, 1 == 0 reached, 2 == (best==avg)
     int stop(){
-        float avg = 0;
-        for(auto it = fitness_sums.begin();it != fitness_sums.end();it++){
-            avg += *it;
-        }
-        avg /= fitness_sums.size();
         auto best = std::min_element(fitness_sums.begin(), fitness_sums.end());
         float bestvalue = *best;
         if(bestvalue == 0){
-            return 1;
+            return 0;
         }
-        if(bestvalue == avg){
-            return 2;
-        }
-        return 0;
+        return 1;
     }
 
     //calculate fitness (bool decides method)
@@ -118,9 +114,9 @@ public:
     }
 
     //mutation
-    void mutate()
+    void mutate(int mutation_rate)
     {
-        collision_mutation();
+        collision_mutation(mutation_rate);
     }
 
     //selection 
@@ -217,7 +213,6 @@ private:
         std::random_device rd;
         std::mt19937 gen(rd());
         // get grid
-        #pragma omp parallel for
         for (auto it = population.begin(); it != population.end(); it++){
             std::vector<std::vector<std::shared_ptr<int>>> grid = it->grid_representation;
             for (int i = 0; i < grid.size(); i++)
@@ -248,7 +243,6 @@ private:
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<int> dist(0, 1);
-        #pragma omp parallel for
         for (auto it = population.begin(); it != population.end(); it++){ //iterate over population
             bool horizontal = dist(gen);
             std::vector<std::vector<std::shared_ptr<int>>> grid = it->grid_representation;
@@ -366,7 +360,6 @@ private:
         int copy_element_size = (population[0].row_length) * (population[0].segment_row_length);
         std::vector<Sudoku<int>> children = std::vector<Sudoku<int>>(population_size);
         std::vector<Sudoku<int>> mutated = {};
-        #pragma omp parallel for
         for (int i = 0; i < population_size; i += n)
         { // iterate over population
             for (int ii = 0; ii < n; ii++)
@@ -410,7 +403,6 @@ private:
         {
             fitness_sudokus.push_back(Sudoku<float>(population[i].size));
         }
-        #pragma omp parallel for
         for (int i = 0; i < population.size(); i++){
             int sum = 0;
             //calculate collision with others
@@ -468,7 +460,6 @@ private:
         {
             fitness_sudokus.push_back(Sudoku<float>(population[i].row_representation.size()));
         }
-        #pragma omp parallel for
         for (int i = 0; i < population_size; i++){ //iterate over population
             //initialize all
             float sum = 0;
@@ -544,7 +535,7 @@ private:
                 int coloumn = ii%population[i].row_length;
                 float tmp = 0;
                 tmp = rowsum[row] + coloumnsum[coloumn] + rowproduct[row] + coloumnproduct[coloumn] + rowmissingvalues[row] + coloumnmissingvalues[coloumn];
-                *fitness_sudokus[i].row_representation[ii] += (tmp > 3);
+                *fitness_sudokus[i].row_representation[ii] += tmp;
                 sum += tmp;
             }
             fitness_sums[i] = sum;
@@ -661,10 +652,12 @@ private:
     // randomly choose and swap elements that have a fitness_value higher than zero
     // and are therefore colliding with others (calculate_collision_fitness)
     // or have are quite far from the "perfect values" (calculate_all_fitness)
-    void collision_mutation()
+    void collision_mutation(int mutation_rate)
     {
         std::vector<Sudoku<int>> mutated = std::vector<Sudoku<int>>(wished_population_size);
-        #pragma omp parallel for
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<int> dist(0, 100);
         for (int i = 0; i < wished_population_size; i++)
         {
             int parentpos = i % population_size;
@@ -678,7 +671,8 @@ private:
                     {
                         *(mutation.grid_representation[ii][iii]) = *(original.grid_representation[ii][iii]);
                     }
-                    else if (0 < *(fitness_sudokus[parentpos].grid_representation[ii][iii]))
+                    else if ((0 < *(fitness_sudokus[parentpos].grid_representation[ii][iii]) && mutation_rate > dist(gen))
+                     || mutation_rate/9 > dist(gen))
                     {
                         swaps.push_back(iii);
                     }
