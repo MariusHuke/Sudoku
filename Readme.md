@@ -7,7 +7,7 @@ Im Datensatz der hier zu lösenden Sudokus befinden sich hauptsächlich 9x9 Sudo
 <details margain_left="20px;">
   <summary>1. Sudoku-Representation</summary>
 
-In [Sudoku.hpp](Sudoku.hpp) wird die Klasse Sudoku definiert. Diese enthält neben Daten zur Gesamtgröße auch öfter verwendete Teilgrößen wie die Größe eines Blocks oder die Anzahl der Blöcke. Die Zahlen des Sudokus sind für einfacheren Zugriff in 2 verschiedenen Datenstrukturen gespeichert, die beide Zugriff auf 
+In [Sudoku.hpp](Code(NoGUI)/Sudoku.hpp) wird die Klasse Sudoku definiert. Diese enthält neben Daten zur Gesamtgröße auch öfter verwendete Teilgrößen wie die Größe eines Blocks oder die Anzahl der Blöcke. Die Zahlen des Sudokus sind für einfacheren Zugriff in 2 verschiedenen Datenstrukturen gespeichert, die beide Zugriff auf 
 die gleichen shared_ptr haben. Dabei ist die row_representation ein fortgehender 1D-vector, der die Reihen hinterinander speichert. Die grid_representation
 ist ein 2D-vector, der in der ersten Dimension die Blöcke und in der zweiten Dimension die Reihen innerhalb der Blöcke speichert. Neben dem default Konstruktor werden auch ein Copy-Konstruktor, welcher eine tiefe Kopie erstellt und ein Size-Konstruktor, welcher ein mit Nullen gefülltes Sudoku der gegebenen Größe erstellt, implementiert. Bei jedem Konstruktur wird automatisch auch die grid_representation erstellt.
 
@@ -17,7 +17,7 @@ Weiterhin ist die Klasse generisch implementiert, sodass sowohl float, als auch 
 <details>
   <summary>2. Generation und Operatoren</summary>
 
-In [Generation.hpp](Generation.hpp) werden alle anderen wichtigen Funktionalitäten definiert. In dieser werden die ursprüngliche Populationsgröße und die momentan vorhandene gespeichert. Die Klasse hat neben dem original Sudoku, also dem ursprünglich gegebendem Input mit leeren Feldern, auch eine Menge von Lösungskandidaten (population). Für die Fitness werden außerdem die Fitnesswerte der gesamten Sudokus (fitness_sums), aber auch die der individuellen Felder (fitness_sudokus) gespeichert. Neben dem default Konstruktor existiert ein Konstruktor, der aus einem gegebenden Sudoku und einer Populationsgröße eine Population erstellt und diese je nach gewählter Methode initialisiert.
+In [Generation.hpp](Code(NoGUI)/Generation.hpp) werden alle anderen wichtigen Funktionalitäten definiert. In dieser werden die ursprüngliche Populationsgröße und die momentan vorhandene gespeichert. Die Klasse hat neben dem original Sudoku, also dem ursprünglich gegebendem Input mit leeren Feldern, auch eine Menge von Lösungskandidaten (population). Für die Fitness werden außerdem die Fitnesswerte der gesamten Sudokus (fitness_sums), aber auch die der individuellen Felder (fitness_sudokus) gespeichert. Neben dem default Konstruktor existiert ein Konstruktor, der aus einem gegebenden Sudoku und einer Populationsgröße eine Population erstellt und diese je nach gewählter Methode initialisiert.
 
 <details>
   <summary>2.1. Initialisierung</summary>
@@ -44,7 +44,6 @@ Für die Fitness werden die Anzahl der Kollisionen in Reihen und Spalten berechn
 
 Zu beachten ist das die durch diese Methoden berechnete Fitness möglichst niedrig sein sollte. Eine Fitness von 0 entspricht dabei der perfekten Lösung.
 
-<sub>[1]: https://www.researchgate.net/profile/Kim-Viljanen/publication/228840763_New_Developments_in_Artificial_Intelligence_and_the_Semantic_Web/links/09e4150a2d2cbb80ff000000/New-Developments-in-Artificial-Intelligence-and-the-Semantic-Web.pdf#page=95</sub>
 </details>
 
 <details>
@@ -75,9 +74,18 @@ Weiterhin stehen Funktionen zum Ausgeben der Population und Fitnesswerte bereit.
 </details>
 
 <details>
-  <summary>3. Einlesen von Daten</summary>
+  <summary>3. Solver</summary>
 
-In main.cpp werden 2 Funktionen zum Einlesen von Daten, wie Sie in data vorliegen, bereitgestellt. Dabei werden mit # beginnende Zeilen ignoriert und alle anderen Reihenweise eingelesen, wobei 0 für ein leeres Feld und [1-9] für den jeweiligen Wert steht. Das einlesen von 25x25 unterscheidet sich leicht, da dort auch zweistellige Zahlen vorkommen.
+In [Solver.hpp](Code(NoGUI)/Solver.hpp) werden Funktionen so zusammengestellt, das sie von der GUI, aber auch ohne grafisches Interface genutzt werden können. 
+
+Identisch für beides sind die 2 Funktionen zum Einlesen von Daten, wie Sie in data vorliegen. Dabei werden mit # beginnende Zeilen ignoriert und alle anderen Reihenweise eingelesen, wobei 0 für ein leeres Feld und [1-9] für den jeweiligen Wert steht. Das einlesen von 25x25 unterscheidet sich leicht, da dort auch zweistellige Zahlen vorkommen.
+
+Weiterhin steht für die GUI eine Konstruktor für die Initialisierung mithilfe eines aus den [Testdaten](data/testdata) über die ID [0-39]ausgewählten Sudokus und einer Populationsgröße bereit. 
+Dazu wird eine Methode step() definiert, die einen Generationsschritt durchführt und den Fitnesswert und Aufbau des besten Individuums zurückgibt.
+
+Mit [ModuleExport.cpp](Code(NoGUI)/ModuleExport.cpp) wurden diese als Python-Module exportiert, sodass sie auch in der GUI verwendet werden können.
+
+Für die Nutzung ohne GUI steht die Funktion testcase bereit, bei der eine Menge von Sudokus, sowie eine Populationsgrößer und Selektionsparamerter übergeben werden können, welche dann in Reihenfolge gelöst werden. Dabei wird auch die benötigte Zeit und die Anzahl der Generationen ausgegeben.
 </details>
 
 <details>
@@ -121,5 +129,8 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen ist dabei wie folgt:
 <details>
   <summary>5. GUI</summary>
   
-  Die Gui ist eine angepasste Version der [hier](https://github.com/robovirmani/sudoku-solver) vorhandenen. Sie funktioniert nur für 9x9 Sudokus.
+  Das [GUI](GUI/GUI.py) nutzt die oben beschriebenden Methoden um grafisch den Prozess der Lösung zu zeigen. Zunächst wird Populationsgröße und Sudokuauswahl abgefragt. 
+  Anschließend wird das Sudoku angezeigt. Dabei werden ursprünglich gegebene Felder grün und Felder mit Kollisionen rot markiert. 
+  Es werden auch die Anzahl an Generationen und die Gesamtzahl an Kollisionen gezeigt. Über den Parameter Schrittweite kann eingestellt werden, wie viele Generationen pro Schritt berechnet werden sollen.
+  Mit dem Button "Schritt" wird dann die entsprechende Anzahl an Generationen berechnet und das beste Individuum angezeigt.
 </details>
