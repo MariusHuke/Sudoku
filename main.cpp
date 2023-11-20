@@ -63,8 +63,8 @@ std::vector<Sudoku<int>> readfiles25(std::vector<std::string> input_paths, int n
 //////////////////////////////////////////TESTCASES////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-//testcase using two_point_crossover, collision_fitness and stochastic_universal_sampling
-void testcase(std::vector<Sudoku<int>> sudokus, int population_size, int selection_rate, int mutation_rate){
+//testcase using two_point_crossover and stochastic_universal_sampling
+void testcase(std::vector<Sudoku<int>> sudokus, int population_size, int selection_rate){
     std::vector<int> numbergens = {};
     std::vector<int> elapsedtime = {};
     float lastbest;
@@ -75,11 +75,11 @@ void testcase(std::vector<Sudoku<int>> sudokus, int population_size, int selecti
         failedgens = 0;
         auto start = std::chrono::high_resolution_clock::now();
         Generation generation = Generation(sudokus[i],population_size);
-        generation.fitness(true);
+        generation.fitness();
         while(true){
-            generation.mutate(mutation_rate);
+            generation.mutate();
             generation.crossover(true); //two_point_crossover
-            generation.fitness(true); //collision_fitness
+            generation.fitness();
             generation.selection(selection_rate,false); //stochastic_universal_sampling
             generations++;
             float bestvalue = generation.get_best();
@@ -89,8 +89,10 @@ void testcase(std::vector<Sudoku<int>> sudokus, int population_size, int selecti
                     break;
                 }
             }
-            lastbest = bestvalue;
-            failedgens = 0;
+            else{
+                lastbest = bestvalue;
+                failedgens = 0;
+            }
             if (bestvalue == 0){ //if solution is found
                 break;
             }
@@ -108,8 +110,52 @@ void testcase(std::vector<Sudoku<int>> sudokus, int population_size, int selecti
 
 int main(){
     std::vector<std::string> input_paths= {"data/testdata"}; //,data/puzzles0_kaggle"data/puzzles4_forum_hardest_1905"};
-    std::vector<Sudoku<int>> sudokus = readfiles(input_paths, 30); //10*(easy,medium,hard,expert)
-    testcase(sudokus, 1002, 20, 100);
-    std::cout << "\n\n";
+    std::vector<Sudoku<int>> sudokus = readfiles(input_paths, 40); //10*(easy,medium,hard,expert)
+    testcase(sudokus, 5002, 20);
     return 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////VISUALIZATION////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+//initialization of the generation
+void initialize(int whichsudoku, int population_size){
+    std::vector<std::string> input_paths = {"data/testdata"};
+    std::vector<Sudoku<int>> sudokus = readfiles(input_paths, 40);
+    Generation generation = Generation(sudokus[whichsudoku],population_size);
+    generation.fitness();
+}
+
+//step aka one generation (return has combined fitness sudoku and Sudoku)
+std::vector<int> step(){
+    generation.mutate();
+    generation.crossover(true); //two_point_crossover
+    generation.fitness();
+    generation.selection(selection_rate,false); //stochastic_universal_sampling
+    std::vector<int> returnvector = {}
+    auto bestvalue = std::min_element(generation.get_fitness_sums().begin(), generation.get_fitness_sums().end());
+    int bestindex = std::distance(generation.get_fitness_sums().begin(), bestvalue);
+    for (const auto& element : generation.get_values(bestindex)) {
+        if (element) {
+            returnvector.push_back(*element);
+        } else {
+            returnvector.push_back(0);
+        }
+    }
+    for (const auto& element : generation.get_fitness(bestindex)) {
+        if (element) {
+            returnvector.push_back(*element);
+        } else {
+            returnvector.push_back(0);
+        }
+    }
+    return returnvector;
+}
+
+//pybind
+PYBIND11_MODULE(Sudoku, m) {
+    m.doc() = "pybind11 Sudoku plugin"; // optional module docstring
+    m.def("initialize", &initialize, "A function which initializes the generation");
+    m.def("step", &step, "A function which does one generation");
 }

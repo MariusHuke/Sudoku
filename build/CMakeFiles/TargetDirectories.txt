@@ -1,0 +1,5 @@
+/home/marius/Desktop/Sudoku/build/CMakeFiles/Sudoku.dir
+/home/marius/Desktop/Sudoku/build/CMakeFiles/edit_cache.dir
+/home/marius/Desktop/Sudoku/build/CMakeFiles/rebuild_cache.dir
+/home/marius/Desktop/Sudoku/build/pybind11/CMakeFiles/edit_cache.dir
+/home/marius/Desktop/Sudoku/build/pybind11/CMakeFiles/rebuild_cache.dir

@@ -48,6 +48,12 @@ public:
         population[i].print();
     }
 
+    //get value at pos i in Generation
+    Sudoku<int> get_value(int i)
+    {
+        return population[i];
+    }
+
     //print all fitness values in Generation
     void print_fitness()
     {
@@ -63,12 +69,24 @@ public:
         fitness_sudokus[i].print();
     }
 
+    //get fitness at pos i in Generation
+    Sudoku<float> get_fitness(int i)
+    {
+        return fitness_sudokus[i];
+    }
+
     //print all fitness_sums
     void print_fitness_sums()
     {
         for(auto it = fitness_sums.begin();it != fitness_sums.end();it++){
             std::cout << *it;
         }
+    }
+
+    //get fitness_sums at pos i in Generation
+    std::vector<float> get_fitness_sums()
+    {
+        return fitness_sums;
     }
 
     //print best individual and return true if a solution is found 
@@ -107,16 +125,15 @@ public:
     }
 
     //calculate fitness (bool decides method)
-    void fitness(bool which = true)
+    void fitness()
     {
-        if(which) calculate_collision_fitness();
-        else calculate_all_fitness();
+        calculate_collision_fitness();
     }
 
     //mutation
-    void mutate(int mutation_rate)
+    void mutate()
     {
-        collision_mutation(mutation_rate);
+        collision_mutation();
     }
 
     //selection 
@@ -445,105 +462,6 @@ private:
         }
     }
     
-    // g_i1(x)=|45-sum_{j=1}^9(x_{i,j})| = row sum
-    // g_j2(x)=|45-sum_{j=1}^9(x_{j,i})| = coloumn sum
-    // g_i2(x)=|9!-product_{j=1}^9(x_{i,j})| = coloumn product
-    // g_j2(x)=|9!-product_{j=1}^9(x_{j,i})| = row product
-    // g_i3(x)=|{1-9}\setminus{x_{i,j}}| = rowmissing
-    // g_j3(x)=|{1-9}\setminus{x_{j,i}}| = coloumnmissing
-    //fitness = sum of those values normalized 
-    //as proposed in https://www.researchgate.net/profile/Kim-Viljanen/publication/228840763_New_Developments_in_Artificial_Intelligence_and_the_Semantic_Web/links/09e4150a2d2cbb80ff000000/New-Developments-in-Artificial-Intelligence-and-the-Semantic-Web.pdf#page=91        
-    void calculate_all_fitness(){
-        //initilize empty
-        fitness_sums = std::vector<float>(population_size,0);
-        for (int i = 0; i < population_size; i++)
-        {
-            fitness_sudokus.push_back(Sudoku<float>(population[i].row_representation.size()));
-        }
-        for (int i = 0; i < population_size; i++){ //iterate over population
-            //initialize all
-            float sum = 0;
-            std::vector<float> rowsum = std::vector<float>(population[i].row_length, 0);
-            std::vector<float> coloumnsum = std::vector<float>(population[i].row_length, 0);
-            std::vector<float> rowproduct = std::vector<float>(population[i].row_length, 1);
-            std::vector<float> coloumnproduct = std::vector<float>(population[i].row_length, 1);
-            std::vector<std::vector<float>> rowmissing = std::vector<std::vector<float>>(population[i].row_length, reset_list(population[i].row_length));
-            std::vector<std::vector<float>> coloumnmissing = std::vector<std::vector<float>>(population[i].row_length, reset_list(population[i].row_length));
-            std::vector<float> rowmissingvalues = std::vector<float>(population[i].row_length, 0);
-            std::vector<float> coloumnmissingvalues = std::vector<float>(population[i].row_length, 0);
-            //calculate values
-            for(int ii = 0; ii < population[i].row_representation.size(); ii++){
-                int row = ii/population[i].row_length;
-                int coloumn = ii%population[i].row_length;
-                rowsum[row] += *(population[i].row_representation[ii]);
-                coloumnsum[coloumn] += *(population[i].row_representation[ii]);
-                rowproduct[row] *= *(population[i].row_representation[ii]);
-                coloumnproduct[coloumn] *= *(population[i].row_representation[ii]);
-                rowmissing[row].erase(std::remove(rowmissing[row].begin(), rowmissing[row].end(), *(population[i].row_representation[ii])), rowmissing[row].end());
-                coloumnmissing[coloumn].erase(std::remove(coloumnmissing[coloumn].begin(), coloumnmissing[coloumn].end(), *(population[i].row_representation[ii])), coloumnmissing[coloumn].end());
-            }
-            //calculate difference from "perfect values"
-            for(int ii = 0; ii < population[i].row_length;ii++){
-                rowsum[ii] = abs(45 - rowsum[ii]);
-                coloumnsum[ii] = abs(45 - coloumnsum[ii]);
-                rowproduct[ii] = abs(362880 - rowproduct[ii]);
-                coloumnproduct[ii] = abs(362880 - coloumnproduct[ii]);
-            }
-            //minmaxnormalization
-            //prepare values needed for calculation
-            float minrowsum = *std::min_element(rowsum.begin(), rowsum.end());
-            float maxrowsum = *std::max_element(rowsum.begin(), rowsum.end());
-            float minrowproduct = *std::min_element(rowproduct.begin(), rowproduct.end());
-            float maxrowproduct = *std::max_element(rowproduct.begin(), rowproduct.end());
-            float minrowmissing = rowmissing[0].size();
-            float maxrowmissing = rowmissing[0].size();
-            for(int ii = 1; ii < population[i].row_length;ii++){
-                if(rowmissing[ii].size() < minrowmissing) minrowmissing = rowmissing[ii].size();
-                if(rowmissing[ii].size() > maxrowmissing) maxrowmissing = rowmissing[ii].size();
-            }
-
-            float mincoloumnsum = *std::min_element(coloumnsum.begin(), coloumnsum.end());
-            float maxcoloumnsum = *std::max_element(coloumnsum.begin(), coloumnsum.end());
-            float mincoloumnproduct = *std::min_element(coloumnproduct.begin(), coloumnproduct.end());
-            float maxcoloumnproduct = *std::max_element(coloumnproduct.begin(), coloumnproduct.end());
-            float mincoloumnmissing = coloumnmissing[0].size();
-            float maxcoloumnmissing = coloumnmissing[0].size();
-            for(int ii = 1; ii < population[i].row_length;ii++){
-                if(coloumnmissing[ii].size() < mincoloumnmissing) mincoloumnmissing = coloumnmissing[ii].size();
-                if(coloumnmissing[ii].size() > maxcoloumnmissing) maxcoloumnmissing = coloumnmissing[ii].size();
-            }
-
-            //calculate minmaxnormalization (if min==max just normalize) 
-            for(int ii = 0; ii < population[i].row_length;ii++){
-                if(maxrowsum == minrowsum) rowsum[ii] = 0;
-                else rowsum[ii] = (rowsum[ii] - minrowsum) / (maxrowsum - minrowsum);
-                if(maxrowproduct == minrowproduct) rowproduct[ii] = 0;
-                else rowproduct[ii] = (rowproduct[ii] - minrowproduct) / (maxrowproduct - minrowproduct);
-                if(maxrowmissing == minrowmissing) rowmissingvalues[ii] = 0;
-                else rowmissingvalues[ii] = (rowmissing[ii].size() - minrowmissing) / (maxrowmissing - minrowmissing);
-
-                if(maxcoloumnsum == mincoloumnsum) coloumnsum[ii] = 0;
-                else coloumnsum[ii] = (coloumnsum[ii] - mincoloumnsum) / (maxcoloumnsum - mincoloumnsum);
-                if(maxcoloumnproduct == mincoloumnproduct) coloumnproduct[ii] = 0;
-                else coloumnproduct[ii] = (coloumnproduct[ii] - mincoloumnproduct) / (maxcoloumnproduct - mincoloumnproduct);
-                if(maxcoloumnmissing == mincoloumnmissing) coloumnmissingvalues[ii] = 0;
-                else coloumnmissingvalues[ii] = (coloumnmissing[ii].size() - mincoloumnmissing) / (maxcoloumnmissing - mincoloumnmissing);
-            }
-            //add up and write back all values
-            for(int ii = 0; ii < population[i].row_representation.size(); ii++){
-                int row = ii/population[i].row_length;
-                int coloumn = ii%population[i].row_length;
-                float tmp = 0;
-                tmp = rowsum[row] + coloumnsum[coloumn] + rowproduct[row] + coloumnproduct[coloumn] + rowmissingvalues[row] + coloumnmissingvalues[coloumn];
-                *fitness_sudokus[i].row_representation[ii] += tmp;
-                sum += tmp;
-            }
-            fitness_sums[i] = sum;
-        }
-    }
-
-
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////SELECTION////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -600,7 +518,7 @@ private:
         std::vector<float> normalized_fitness = {};
         for (int i = 0; i < fitness_sums.size(); i++)
         {
-            normalized_fitness.push_back((fitness_sums[i] - min) / (max - min));
+            normalized_fitness.push_back((max - fitness_sums[i] - min) / (max - min));
             sum += normalized_fitness[i];
         }
 
@@ -608,10 +526,9 @@ private:
         std::vector<float> roulette_wheel = std::vector<float>(0); 
         float pointer = 0;
         for(int i = 0; i < normalized_fitness.size(); i++){
-            roulette_wheel.push_back(1 - normalized_fitness[i] / sum + pointer);  //(1-) so that worst is smallest
-            pointer += 1 - normalized_fitness[i] / sum;
+            roulette_wheel.push_back(normalized_fitness[i] / sum + pointer);  //(1-) so that worst is smallest
+            pointer += normalized_fitness[i] / sum;
         }
-
         //get starting position
         std::random_device rd;
         std::mt19937 gen(rd());
@@ -652,7 +569,7 @@ private:
     // randomly choose and swap elements that have a fitness_value higher than zero
     // and are therefore colliding with others (calculate_collision_fitness)
     // or have are quite far from the "perfect values" (calculate_all_fitness)
-    void collision_mutation(int mutation_rate)
+    void collision_mutation()
     {
         std::vector<Sudoku<int>> mutated = std::vector<Sudoku<int>>(wished_population_size);
         std::random_device rd;
@@ -671,8 +588,7 @@ private:
                     {
                         *(mutation.grid_representation[ii][iii]) = *(original.grid_representation[ii][iii]);
                     }
-                    else if ((0 < *(fitness_sudokus[parentpos].grid_representation[ii][iii]) && mutation_rate > dist(gen))
-                     || mutation_rate/9 > dist(gen))
+                    else if (0 < *(fitness_sudokus[parentpos].grid_representation[ii][iii]) || 11 > dist(gen))
                     {
                         swaps.push_back(iii);
                     }
