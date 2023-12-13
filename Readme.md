@@ -134,15 +134,13 @@ Dabei wurde ein Startbildschirm, sowie der Simulationsbildschirm implementiert. 
 Für jeden Simulationsschritt wird die in C++ definierte Methode
 mit entsprechenden Übergabewerten aufgerufen. Die Rückgabewerte werden dann in der GUI verarbeitet und angezeigt.
 
-Um eine eigenständige Anwendung zu generieren wurde anschließend mit pyinstaller eine ausführbare Datei erstellt, welche alle benötigten Dateien enthält.
-
 </details>
 <details>
 <summary>5.2 Anwendung</summary>
 
-Das GUI nutzt die oben beschriebenden Methoden um grafisch den Prozess der Lösung zu zeigen. 
-Sie kann über die ausführbare Datei [GUI](GUI) oder das Python-Script [GUI.py](Code/GUI.py) gestartet werden.
-Für die Ausführung mit Python sind dabei das mitglieferte [Sudoku cpython Modul](Code/Sudoku.cpython-310-x86_64-linux-gnu.so) sowie matplotlib und pygame erforderlich.
+Das GUI nutzt die oben beschriebenen Methoden um grafisch den Prozess der Lösung zu zeigen. 
+Sie kann mit Debian über (GUI.sh)[GUI.sh] und mit Windows über (GUI.bat)[GUI.bat] gestartet werden.
+Vorraussetung ist Python. Die Module matplotlib und pygame werden über pip installiert.
 
 Zunächst wird Populationsgröße und Sudokuauswahl abgefragt. 
 Empfehlenswert sind Werte, die sich an der obigen Auswertung orientieren.
@@ -152,11 +150,11 @@ Anschließend wird das Sudoku angezeigt. Dabei werden ursprünglich gegebene Fel
 Es werden auch die Anzahl an Generationen und die Gesamtzahl an Kollisionen im besten Sudoku dieser Generation gezeigt. Weiterhin werden in einem Graph die Best- und Durchschnittswerte der Generationen angezeigt.
 
 Über den Parameter Schrittweite kann eingestellt werden, wie viele Generationen pro Schritt berechnet werden sollen. 
-Mit dem Button "Schritt" wird dann die entsprechende Anzahl an Generationen berechnet und das beste Individuum, sowie der Verlauf der Fitness angezeigt. Dabei kann es bei höheren Generationzahlen (>500) durchaus zu längeren Wartezeiten kommen.
+Mit dem Button "Schritt" wird dann die entsprechende Anzahl an Generationen berechnet und das beste Individuum, sowie der Verlauf der Fitness angezeigt. Dabei kann es bei höheren Generationszahlen (>500) durchaus zu längeren Wartezeiten kommen.
 
 In der Simulation werden dabei die oben empirisch ermittelten Bestwerte, also diagonales Crossover und die triviale Selektion verwendet. Die Selektionsrate kann zwischen jedem Schritt angepasst werden.
 
-Ein zwingedes Abbruchkriterium ist nicht definiert. Vielmehr kann der Nutzer anhand der angezeigten durchschnittlichen Fitness der jeweiligen Generationen selbst entscheiden.
+Ein zwingendes Abbruchkriterium ist nicht definiert. Vielmehr kann der Nutzer anhand der angezeigten durchschnittlichen Fitness der jeweiligen Generationen selbst entscheiden.
 
 Über "Reset" kann zum Startbildschirm zurückgekehrt werden.
 "0. Gen" setzt die Simulation mit gleicher Populationsgröße und gleichem Sudoku zurück und schafft eine neue Startpopulation.
