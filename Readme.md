@@ -112,8 +112,8 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 |:-:|:-:|:-:|:-:|:-:|
 |Leicht|100|1102|7.2|-|
 |Mittel|60|2721|18.8|6381|
-|Schwer|0|0|9412|
-|Experte|0|0|9583|
+|Schwer|0|-|32.3|9412|
+|Experte|0|-|33.4|9583|
 
 #### 2. Populationsgröße 500
 |Schwierigkeit|gelöst (%)|durchschnittliche Zeit|durchschnittliche Generationen|durchschnittliche Zeit(Abbruch)|
@@ -121,7 +121,7 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 |Leicht|100|4662|5.6|-|
 |Mittel|90|13222|11|35048|
 |Schwer|50|25979|32,4|53385|
-|Experte|0|0|0|51216|
+|Experte|0|-|40.1|51216|
 
 #### 3. Populationsgröße 1000
 |Schwierigkeit|gelöst (%)|durchschnittliche Zeit|durchschnittliche Generationen|durchschnittliche Zeit(Abbruch)
