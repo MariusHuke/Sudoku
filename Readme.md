@@ -129,8 +129,6 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 <details>
 <summary>5. GUI</summary>
 
-<details>
-<summary>5.1 Implementierung</summary>
 Um die GUI zu implementieren wurde das Python-Modul pygame verwendet. 
 Dabei wurde ein Startbildschirm, sowie der Simulationsbildschirm implementiert. Neben dem selbst gezeichneten Sudoku Feld und Knöpfen, sowie Eingabefeldern wurde auch ein Graph implementiert, der den Verlauf der Fitness über die Generationen anzeigt.
 
@@ -138,8 +136,10 @@ Für jeden Simulationsschritt wird die in C++ definierte Methode
 mit entsprechenden Übergabewerten aufgerufen. Die Rückgabewerte werden dann in der GUI verarbeitet und angezeigt.
 
 </details>
-<details>
-<summary>5.2 Anwendung</summary>
+
+## Anwendung
+
+![GUI](Pictures/GUI.png)
 
 Das GUI nutzt die oben beschriebenen Methoden um grafisch den Prozess der Lösung zu zeigen. 
 Sie kann mit Debian über [GUI.sh](GUI.sh) und mit Windows über [GUI.bat](GUI.bat) gestartet werden.
@@ -161,8 +161,4 @@ Ein zwingendes Abbruchkriterium ist nicht definiert. Vielmehr kann der Nutzer an
 
 Über "Reset" kann zum Startbildschirm zurückgekehrt werden.
 "0. Gen" setzt die Simulation mit gleicher Populationsgröße und gleichem Sudoku zurück und schafft eine neue Startpopulation.
-</details>
-
-![GUI](Pictures/GUI.png)
-
 </details>
