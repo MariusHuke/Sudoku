@@ -77,14 +77,14 @@ Weiterhin stehen Funktionen zum Ausgeben der Population und Fitnesswerte bereit.
 <details>
   <summary>3. Solver</summary>
 
-In [Solver.hpp](Code(NoGUI)/Solver.hpp) werden Funktionen so zusammengestellt, das sie von der GUI, aber auch ohne grafisches Interface genutzt werden können. 
+In [Solver.hpp](Code/Solver.hpp) werden Funktionen so zusammengestellt, das sie von der GUI, aber auch ohne grafisches Interface genutzt werden können. 
 
 Identisch für beides sind die 2 Funktionen zum Einlesen von Daten, wie Sie in data vorliegen. Dabei werden mit # beginnende Zeilen ignoriert und alle anderen Reihenweise eingelesen, wobei 0 für ein leeres Feld und [1-9] für den jeweiligen Wert steht. Das Einlesen von 25x25 unterscheidet sich leicht, da dort auch zweistellige Zahlen vorkommen.
 
-Weiterhin steht für die GUI eine Konstruktor für die Initialisierung mithilfe eines aus den [Testdaten](data/testdata) über die ID [0-39] ausgewählten Sudokus und einer Populationsgröße bereit. 
+Weiterhin steht für die GUI eine Konstruktor für die Initialisierung mithilfe eines aus den [Testdaten](Code/testdata.txt) über die ID [0-39] ausgewählten Sudokus und einer Populationsgröße bereit. 
 Dazu wird eine Methode step() definiert, die einen Generationsschritt durchführt und den Fitnesswert und Aufbau des besten Individuums, sowie den Durchschnitts- und Bestwert der Population zurückgibt.
 
-Mit [ModuleExport.cpp](Code(NoGUI)/ModuleExport.cpp) wurden diese als Python-Module exportiert, sodass sie auch in der GUI verwendet werden können.
+Mit [ModuleExport.cpp](Code/ModuleExport.cpp) wurden diese als Python-Module exportiert, sodass sie auch in der GUI verwendet werden können.
 
 Für die Nutzung ohne GUI steht die Funktion testcase bereit, bei der eine Menge von Sudokus, sowie eine Populationsgröße und Selektionsparameter übergeben werden können, welche dann in Reihenfolge gelöst werden. Dabei wird auch die benötigte Zeit und die Anzahl der Generationen ausgegeben.
 </details>
@@ -92,7 +92,7 @@ Für die Nutzung ohne GUI steht die Funktion testcase bereit, bei der eine Menge
 <details>
   <summary>4. Auswertung der Ergebnisse</summary>
 
-Um das Programm zu testen wird die Datei [testdata](data/testdata) verwendet. In dieser sind zu jeder der Schwierigkeiten (leicht, mittel, schwer, Experte) 10 Sudokus hinterlegt. 
+Um das Programm zu testen wird die Datei [testdata](Code/testdata.txt) verwendet. In dieser sind zu jeder der Schwierigkeiten (leicht, mittel, schwer, Experte) 10 Sudokus hinterlegt. 
 Die Initialisierungsmethode schien außer auf den Startwert der Fitness für den Verlauf der Fitness keinen Einfluss zu haben. 
 Als beste Methode konnte die Kombination aus diagonalem Crossover und simpler Selektion der besten 20 % empirisch bestimmt werden.
 Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
@@ -144,7 +144,7 @@ Vorraussetung ist Python. Die Module matplotlib und pygame werden über pip inst
 
 Zunächst wird Populationsgröße und Sudokuauswahl abgefragt. 
 Empfehlenswert sind Werte, die sich an der obigen Auswertung orientieren.
-Die verschiedenen ungelösten Sudokus in aufbearbeiteter Form können dabei in der Datei [Sudokus](Sudokus) gefunden werden (0 = leeres Feld).
+Die verschiedenen ungelösten Sudokus in aufbearbeiteter Form können dabei in der Datei [Sudokus](Sudokus.txt) gefunden werden (0 = leeres Feld).
 
 Anschließend wird das Sudoku angezeigt. Dabei werden ursprünglich gegebene Felder grün und Felder mit Kollisionen rot markiert. 
 Es werden auch die Anzahl an Generationen und die Gesamtzahl an Kollisionen im besten Sudoku dieser Generation gezeigt. Weiterhin werden in einem Graph die Best- und Durchschnittswerte der Generationen angezeigt.
