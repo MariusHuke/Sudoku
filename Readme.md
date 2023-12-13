@@ -1,7 +1,7 @@
 # Sudoku Löser basierend auf einem genetischen Algorithmus
 Ziel dieses Projektes ist es Sudoku beliebiger Form mithilfe von genetischen Algorithmen zu lösen.
 Das bedeutet die Felder eines vorgegebenen Sudokus so auszufüllen, dass in keiner Reihe, Spalte und keinem Block Zahlen doppelt vorkommen. 
-Im Datensatz der hier zu lösenden Sudokus befinden sich hauptsächlich 9x9 Sudokus, aber auch wenige 25x25 [Sudokus](data.zip).
+Im Datensatz der hier zu lösenden Sudokus befinden sich hauptsächlich 9x9 Sudokus, aber auch wenige 25x25 [Sudokus](Code/data.zip).
 
 ## Erklärung der Bestandteile
 <details margain_left="20px;">
@@ -124,8 +124,11 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 
 </details>
 
+
+
 <details>
 <summary>5. GUI</summary>
+
 <details>
 <summary>5.1 Implementierung</summary>
 Um die GUI zu implementieren wurde das Python-Modul pygame verwendet. 
@@ -158,4 +161,8 @@ Ein zwingendes Abbruchkriterium ist nicht definiert. Vielmehr kann der Nutzer an
 
 Über "Reset" kann zum Startbildschirm zurückgekehrt werden.
 "0. Gen" setzt die Simulation mit gleicher Populationsgröße und gleichem Sudoku zurück und schafft eine neue Startpopulation.
+</details>
+
+![GUI](Pictures/GUI.png)
+
 </details>
