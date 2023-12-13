@@ -90,8 +90,17 @@ Für die Nutzung ohne GUI steht die Funktion testcase bereit, bei der eine Menge
 </details>
 
 <details>
-  <summary>4. Auswertung der Ergebnisse</summary>
+<summary>5. GUI</summary>
 
+Um die GUI zu implementieren wurde das Python-Modul pygame verwendet. 
+Dabei wurde ein Startbildschirm, sowie der Simulationsbildschirm implementiert. Neben dem selbst gezeichneten Sudoku Feld und Knöpfen, sowie Eingabefeldern wurde auch ein Graph implementiert, der den Verlauf der Fitness über die Generationen anzeigt.
+
+Für jeden Simulationsschritt wird die in C++ definierte Methode
+mit entsprechenden Übergabewerten aufgerufen. Die Rückgabewerte werden dann in der GUI verarbeitet und angezeigt.
+
+</details>
+
+## Auswertung
 Um das Programm zu testen wird die Datei [testdata](Code/testdata.txt) verwendet. In dieser sind zu jeder der Schwierigkeiten (leicht, mittel, schwer, Experte) 10 Sudokus hinterlegt. 
 Die Initialisierungsmethode schien außer auf den Startwert der Fitness für den Verlauf der Fitness keinen Einfluss zu haben. 
 Als beste Methode konnte die Kombination aus diagonalem Crossover und simpler Selektion der besten 20 % empirisch bestimmt werden.
@@ -121,21 +130,6 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 |Mittel|100|24384|14.8|-|
 |Schwer|60|43039|25.5|87460|
 |Experte|20|91698|54,5|123294|
-
-</details>
-
-
-
-<details>
-<summary>5. GUI</summary>
-
-Um die GUI zu implementieren wurde das Python-Modul pygame verwendet. 
-Dabei wurde ein Startbildschirm, sowie der Simulationsbildschirm implementiert. Neben dem selbst gezeichneten Sudoku Feld und Knöpfen, sowie Eingabefeldern wurde auch ein Graph implementiert, der den Verlauf der Fitness über die Generationen anzeigt.
-
-Für jeden Simulationsschritt wird die in C++ definierte Methode
-mit entsprechenden Übergabewerten aufgerufen. Die Rückgabewerte werden dann in der GUI verarbeitet und angezeigt.
-
-</details>
 
 ## Anwendung
 
