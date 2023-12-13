@@ -5,7 +5,7 @@
 //export constructor ans step function so it can be used by the gui
 PYBIND11_MODULE(Sudoku, m){
     pybind11::class_<Solver>(m, "Solver")
-        .def(pybind11::init<int,int>())
+        .def(pybind11::init<int,int,std::string>())
         .def("step",&Solver::step);
 }
 

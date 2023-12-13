@@ -362,15 +362,14 @@ private:
     //otherwise e.g. with 16x16 and 2 point only the second row would be given by the other parent
     void crossover(int n)
     {
-        assert(population_size % n == 0);
         int copy_element_size = (population[0].row_length) * (population[0].segment_row_length);
-        std::vector<Sudoku<int>> children = std::vector<Sudoku<int>>(population_size);
+        std::vector<Sudoku<int>> children = std::vector<Sudoku<int>>(population_size+(n-population_size%n));
         std::vector<Sudoku<int>> mutated = {};
         for (int i = 0; i < population_size; i += n)
         { // iterate over population
             for (int ii = 0; ii < n; ii++)
             { // initialize children by copying parents
-                children[i + ii] = Sudoku<int>(population[i + ii]);
+                children[i + ii] = Sudoku<int>(population[(i + ii)%population_size]);
             }
             for (int ii = 0; ii < n; ii++)
             { // iterate over children
@@ -381,7 +380,7 @@ private:
                     for (int iii = 0; iii < copy_element_size; iii++)
                     { // iterate over rows
                         *(children[i + ii].row_representation[(ii + parent) % n * copy_element_size + iii]) 
-                        = *(population[i + parent].row_representation[(ii + parent) % n * copy_element_size + iii]);
+                        = *(population[(i + parent)%population_size].row_representation[(ii + parent) % n * copy_element_size + iii]);
                     }
                     parent++;
                     if (parent == n)
@@ -389,7 +388,7 @@ private:
                 }
             }
         }
-        for (int i = 0; i < population_size; i++)
+        for (int i = 0; i < children.size(); i++)
         {
             population.push_back(children[i]);
         }
@@ -468,6 +467,14 @@ private:
     void strongest_selection(int keeping_percentage)
     {
         assert(keeping_percentage <= 100);
+        if(keeping_percentage == 100) return;
+        if(keeping_percentage == 0){
+            population.clear();
+            fitness_sudokus.clear();
+            fitness_sums.clear();
+            population_size = 0;
+            return;
+        }
         //transform to items
         std::vector<item> fitness_values = std::vector<item>(0); 
         for (int i = 0; i < fitness_sums.size(); i++)

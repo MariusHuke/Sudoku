@@ -13,15 +13,15 @@ public:
     }
 
     //initialization of the generation
-    Solver(int whichsudoku, int population_size){
-        std::vector<std::string> input_paths = {"data/testdata"};
+    Solver(int whichsudoku, int population_size, std::string path){
+        std::vector<std::string> input_paths = {path};
         std::vector<Sudoku<int>> sudokus = readfiles(input_paths, 40);
         generation = Generation(sudokus[whichsudoku],population_size);
         generation.fitness();
     }
 
     //step aka one generation (return has combined fitness sudoku and Sudoku)
-    std::vector<int> step(){
+    std::vector<int> step(int percentage){
         std::vector<int> returnvector = {};
         std::vector<float> sums = generation.get_fitness_sums();
         auto bestvalue = std::min_element(sums.begin(),sums.end());
@@ -32,10 +32,12 @@ public:
         for (int i = 0; i < generation.get_fitness(bestindex).row_representation.size();i++) {
             returnvector.push_back(*generation.get_fitness(bestindex).row_representation[i]);
         }
+        returnvector.push_back(std::round(std::accumulate(sums.begin(),sums.end(),0.0)/sums.size()));
+        returnvector.push_back(*bestvalue);
         generation.mutate();
         generation.crossover(true); //two_point_crossover
         generation.fitness();
-        generation.selection(20,false); //strongest_selection
+        generation.selection(percentage,false); //strongest_selection
         return returnvector;
     }
 
@@ -43,7 +45,7 @@ public:
     //////////////////////////////////////////TESTCASES////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //testcase using two_point_crossover and stochastic_universal_sampling
+    //testcase using two_point_crossover and strongest_selection
     void testcase(std::vector<Sudoku<int>> sudokus, int population_size, int selection_rate){
         std::vector<int> numbergens = {};
         std::vector<int> elapsedtime = {};

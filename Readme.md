@@ -1,23 +1,24 @@
 # Sudoku Löser basierend auf einem genetischen Algorithmus
-Ziel dieses Projektes ist es Sudokus beliebiger Form mit Hilfe von genetischen Algorithmen zu lösen.
-Das bedeutet die Felder eines vorgegebenden Sudokus so auszufüllen, dass in keiner Reihe, Spalte und keinem Block Zahlen doppelt vorkommen. 
-Im Datensatz der hier zu lösenden Sudokus befinden sich hauptsächlich 9x9 Sudokus, aber auch wenige [25x25](data/25x25) Sudokus.
+Ziel dieses Projektes ist es Sudoku beliebiger Form mithilfe von genetischen Algorithmen zu lösen.
+Das bedeutet die Felder eines vorgegebenen Sudokus so auszufüllen, dass in keiner Reihe, Spalte und keinem Block Zahlen doppelt vorkommen. 
+Im Datensatz der hier zu lösenden Sudokus befinden sich hauptsächlich 9x9 Sudokus, aber auch wenige 25x25 [Sudokus](data.zip).
 
 ## Erklärung der Bestandteile
 <details margain_left="20px;">
   <summary>1. Sudoku-Representation</summary>
 
-In [Sudoku.hpp](Code(NoGUI)/Sudoku.hpp) wird die Klasse Sudoku definiert. Diese enthält neben Daten zur Gesamtgröße auch öfter verwendete Teilgrößen wie die Größe eines Blocks oder die Anzahl der Blöcke. Die Zahlen des Sudokus sind für einfacheren Zugriff in 2 verschiedenen Datenstrukturen gespeichert, die beide Zugriff auf 
-die gleichen shared_ptr haben. Dabei ist die row_representation ein fortgehender 1D-vector, der die Reihen hinterinander speichert. Die grid_representation
-ist ein 2D-vector, der in der ersten Dimension die Blöcke und in der zweiten Dimension die Reihen innerhalb der Blöcke speichert. Neben dem default Konstruktor werden auch ein Copy-Konstruktor, welcher eine tiefe Kopie erstellt und ein Size-Konstruktor, welcher ein mit Nullen gefülltes Sudoku der gegebenen Größe erstellt, implementiert. Bei jedem Konstruktur wird automatisch auch die grid_representation erstellt.
+In [Sudoku.hpp](Code/Sudoku.hpp) wird die Klasse Sudoku definiert. Diese enthält neben Daten zur Gesamtgröße auch öfter verwendete Teilgrößen wie die Größe eines Blocks oder die Anzahl der Blöcke. Die Zahlen des Sudokus sind für einfacheren Zugriff in 2 verschiedenen Datenstrukturen gespeichert, die beide Zugriff auf 
+die gleichen shared_ptr haben. Dabei ist die row_representation ein fortgehender 1D-Vektor, der die Reihen hintereinander speichert. Die grid_representation
+ist ein 2D-Vektor, der in der ersten Dimension die Blöcke und in der zweiten Dimension die Reihen innerhalb der Blöcke speichert. Neben dem Standardkonstruktor werden auch ein Copy-Konstruktor, welcher eine tiefe Kopie erstellt und ein Size-Konstruktor, welcher ein mit Nullen gefülltes Sudoku der gegebenen Größe erstellt, implementiert. Bei jedem Konstruktor wird automatisch auch die grid_representation erstellt.
+Es stehen außerdem Getter- ,Setter- sowie Ausgabefunktionen bereit.
 
-Weiterhin ist die Klasse generisch implementiert, sodass sowohl float, als auch int Datentypen verwendet werden können. Die float Variante ist für das Berechnen von individuellen Fitnessbewertung wichtig.
+Weiterhin ist die Klasse generisch implementiert, sodass sowohl float, als auch int Datentypen verwendet werden können. Die float Variante ist für das Berechnen von individuellen Fitnessbewertungen wichtig.
 </details>
 
 <details>
   <summary>2. Generation und Operatoren</summary>
 
-In [Generation.hpp](Code(NoGUI)/Generation.hpp) werden alle anderen wichtigen Funktionalitäten definiert. In dieser werden die ursprüngliche Populationsgröße und die momentan vorhandene gespeichert. Die Klasse hat neben dem original Sudoku, also dem ursprünglich gegebendem Input mit leeren Feldern, auch eine Menge von Lösungskandidaten (population). Für die Fitness werden außerdem die Fitnesswerte der gesamten Sudokus (fitness_sums), aber auch die der individuellen Felder (fitness_sudokus) gespeichert. Neben dem default Konstruktor existiert ein Konstruktor, der aus einem gegebenden Sudoku und einer Populationsgröße eine Population erstellt und diese je nach gewählter Methode initialisiert.
+In [Generation.hpp](Code/Generation.hpp) werden alle anderen wichtigen Funktionalitäten definiert. In dieser werden die ursprüngliche Populationsgröße und die momentan vorhandene gespeichert. Die Klasse hat neben dem original Sudoku, also dem ursprünglich gegebenem Input mit leeren Feldern, auch eine Menge von Lösungskandidaten (population). Für die Fitness werden außerdem die Fitnesswerte der gesamten Sudokus (fitness_sums), aber auch die der individuellen Felder (fitness_sudokus) gespeichert. Neben dem default Konstruktor existiert ein Konstruktor, der aus einem gegebenen Sudoku und einer Populationsgröße eine Population erstellt und diese je nach gewählter Methode initialisiert.
 
 <details>
   <summary>2.1. Initialisierung</summary>
@@ -26,7 +27,7 @@ Für die Initialisierung können 2 verschiedene Methoden verwendet werden. Beide
 1. Zufällige Initialisierung: Jedem Feld wird eine zufällige Zahl zugeordnet (1-9). Dabei wird allerdings darauf geachtet, dass in keinem Block eine Zahl doppelt vorkommt.
 2. Schlaue Initialisierung: ist eine Erweiterung, die bei der Initialisierung nicht nur auf keine Kollisionen im Block achtet, sondern dazu auch zufällig
 horizontal oder vertikal wählt und auch dort versucht die Kollisionen mit Reihen bzw. Spalten zu vermeiden. Das ist natürlich nicht immer mit wenig Rechenaufwand möglich.
-Daher werden die wenigen Felder, für die sich kein Kandidaten in linearer Laufzeit findet, der nicht mit Reihe bzw. Spalte kollidiert, zufällig so belegt, dass wenigstens die Kollision im Block verhindert wird.
+Daher werden die wenigen Felder, für die sich keine Kandidaten in linearer Laufzeit findet, der nicht mit Reihe bzw. Spalte kollidiert, zufällig so belegt, dass wenigstens die Kollision im Block verhindert wird.
 </details>
 
 <details>
@@ -51,25 +52,25 @@ Zu beachten ist das die durch diese Methoden berechnete Fitness möglichst niedr
 
 Für die Selektion existieren 2 Möglichkeiten.
 1. Ordnung der Individuen nach ihrer Fitness und auswählen dann der besten n (abhängig von der gewählten keeping_percentage) Individuen aus.
-2. Stochastic-Universal-Sampling: Normalisiert alle Fitnesswerte durch MinMax-Normalisierung und zieht diese vom Maximum ab, sodass der niedrigste Wert der schlechtesten Fitness entspricht. Bildet dann ein Roulette-Rad, wobei der Wert jedes Elementes dem Anteil auf dem Rad entspricht. Dann wird ein zufälliger Startpunkt zwischen 0 und 1 gewählt und von diesem aus werden in Schritten, deren Größe von der keeping_percentage abhängt, die Individuen solange suagewählt, bis man wieder am Startpunkt ist und somit die gewünscht Populationsgrößer erreich hat.
+2. Stochastic-Universal-Sampling: Normalisiert alle Fitnesswerte durch MinMax-Normalisierung und zieht diese vom Maximum ab, sodass der niedrigste Wert der schlechtesten Fitness entspricht. Bildet dann ein Roulette-Rad, wobei der Wert jedes Elementes dem Anteil auf dem Rad entspricht. Dann wird ein zufälliger Startpunkt zwischen 0 und 1 gewählt und von diesem aus werden in Schritten, deren Größe von der keeping_percentage abhängt, die Individuen solange ausgewählt, bis man wieder am Startpunkt ist und somit die gewünschte Populationsgröße erreicht hat.
 </details>
 
 <details>
   <summary>2.4 Mutation</summary>
 
-Die Mutation nutzt den fitness_sudoku vector. Dabei wird für jedes Feld geschaut ob dieses einen Fitnesswert > 1 hat. Ist dies der Fall wird die Position in eine Liste swaps eingefügt. Weiterhin werden auch Felder mit Fitnesswert 0 mit einer Wahrscheinlichkeit von 1/9 eingefügt. Diese Liste wird zufällig gemischt und Felder werden in Paaren vertauscht. Sollte ein Feld übrig bleiben wird es einfach wieder an seinen Platz zurückgeschrieben.
+Die Mutation nutzt den fitness_sudoku Vektor. Dabei wird für jedes Feld geschaut ob dieses einen Fitnesswert > 1 hat. Ist dies der Fall wird die Position in eine Liste swaps eingefügt. Weiterhin werden auch Felder mit Fitnesswert 0 mit einer Wahrscheinlichkeit von 1/9 eingefügt. Diese Liste wird zufällig gemischt und Felder werden in Paaren vertauscht. Sollte ein Feld übrig bleiben wird es einfach wieder an seinen Platz zurückgeschrieben.
 </details>
 
 <details>
   <summary>2.5 Abbruchkriterium</summary>
 
-Die Funktion bricht ab, wenn in 25 aufeinanderfolgenden Generationen keine Verbesserung des Fitnesswertes erreicht wurde.
+Die Funktion bricht ab, wenn in 25 aufeinanderfolgenden Generationen keine Verbesserung des Fitnesswertes erreicht wurde, denn dann kann man von einem lokalen Minimum ausgehen. Aufbauend darauf wären auch Versionen denkbar, die daraufhin eine neue Startpopulation schaffen.
 </details>
 
 <details>
   <summary>2.6 Sonstiges</summary>
 
-Weiterhin stehen Funktionen zum Ausgeben der Population und Fitnesswerte bereit. Eine weitere bereitstehende Methode punish_same kann genutzt werden um die Fitness von Individuen zu erhöhen (also zu verschlechtern), wenn diese in vielen Feldern mit anderen übereinstimmen.
+Weiterhin stehen Funktionen zum Ausgeben der Population und Fitnesswerte bereit. Eine weitere bereitstehende Methode punish_same kann genutzt werden, um die Fitness von Individuen zu erhöhen (also zu verschlechtern), wenn diese in vielen Feldern mit anderen übereinstimmen.
 </details>
 </details>
 
@@ -78,59 +79,85 @@ Weiterhin stehen Funktionen zum Ausgeben der Population und Fitnesswerte bereit.
 
 In [Solver.hpp](Code(NoGUI)/Solver.hpp) werden Funktionen so zusammengestellt, das sie von der GUI, aber auch ohne grafisches Interface genutzt werden können. 
 
-Identisch für beides sind die 2 Funktionen zum Einlesen von Daten, wie Sie in data vorliegen. Dabei werden mit # beginnende Zeilen ignoriert und alle anderen Reihenweise eingelesen, wobei 0 für ein leeres Feld und [1-9] für den jeweiligen Wert steht. Das einlesen von 25x25 unterscheidet sich leicht, da dort auch zweistellige Zahlen vorkommen.
+Identisch für beides sind die 2 Funktionen zum Einlesen von Daten, wie Sie in data vorliegen. Dabei werden mit # beginnende Zeilen ignoriert und alle anderen Reihenweise eingelesen, wobei 0 für ein leeres Feld und [1-9] für den jeweiligen Wert steht. Das Einlesen von 25x25 unterscheidet sich leicht, da dort auch zweistellige Zahlen vorkommen.
 
-Weiterhin steht für die GUI eine Konstruktor für die Initialisierung mithilfe eines aus den [Testdaten](data/testdata) über die ID [0-39]ausgewählten Sudokus und einer Populationsgröße bereit. 
-Dazu wird eine Methode step() definiert, die einen Generationsschritt durchführt und den Fitnesswert und Aufbau des besten Individuums zurückgibt.
+Weiterhin steht für die GUI eine Konstruktor für die Initialisierung mithilfe eines aus den [Testdaten](data/testdata) über die ID [0-39] ausgewählten Sudokus und einer Populationsgröße bereit. 
+Dazu wird eine Methode step() definiert, die einen Generationsschritt durchführt und den Fitnesswert und Aufbau des besten Individuums, sowie den Durchschnitts- und Bestwert der Population zurückgibt.
 
 Mit [ModuleExport.cpp](Code(NoGUI)/ModuleExport.cpp) wurden diese als Python-Module exportiert, sodass sie auch in der GUI verwendet werden können.
 
-Für die Nutzung ohne GUI steht die Funktion testcase bereit, bei der eine Menge von Sudokus, sowie eine Populationsgrößer und Selektionsparamerter übergeben werden können, welche dann in Reihenfolge gelöst werden. Dabei wird auch die benötigte Zeit und die Anzahl der Generationen ausgegeben.
+Für die Nutzung ohne GUI steht die Funktion testcase bereit, bei der eine Menge von Sudokus, sowie eine Populationsgröße und Selektionsparameter übergeben werden können, welche dann in Reihenfolge gelöst werden. Dabei wird auch die benötigte Zeit und die Anzahl der Generationen ausgegeben.
 </details>
 
 <details>
   <summary>4. Auswertung der Ergebnisse</summary>
 
-Um das Programm zu testen wird die Datei [testdata](data/testdata) verwendet. In dieser sind zu jeder der Schwierigkeiten (easy,medium,hard,expert) 10 Sudokus hinterlegt. 
-Die Initialisierung schien außer auf den Startwert der 
-Als beste Methode konnte die Kombination aus diagonalem Crossover und simpler Selektion der besten 20% empirisch bestimmt werden.
-Die Auswirkungen der unterschiedlichen Populationsgrößen ist dabei wie folgt:
+Um das Programm zu testen wird die Datei [testdata](data/testdata) verwendet. In dieser sind zu jeder der Schwierigkeiten (leicht, mittel, schwer, Experte) 10 Sudokus hinterlegt. 
+Die Initialisierungsmethode schien außer auf den Startwert der Fitness für den Verlauf der Fitness keinen Einfluss zu haben. 
+Als beste Methode konnte die Kombination aus diagonalem Crossover und simpler Selektion der besten 20 % empirisch bestimmt werden.
+Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 
-#### 1. Populationgröße 100
+#### 1. Populationsgröße 100
 
-|Schwierigkeit|gelöst (%)|durschnittliche Lösungszeit(ms)|durschnittliche Generationen|durschnittliche Abbruchszeit(ms)|
+|Schwierigkeit|gelöst (%)|durchschnittliche Zeit|durchschnittliche Generationen|durchschnittliche Zeit(Abbruch)|
 |:-:|:-:|:-:|:-:|:-:|
 |Leicht|100|1102|7.2|-|
 |Mittel|60|2721|18.8|6381|
 |Schwer|0|0|9412|
 |Experte|0|0|9583|
 
-#### 2. Populationgröße 500
-|Schwierigkeit|gelöst (%)|durschnittliche Zeit|durschnittliche Generationen|durschnittliche Zeit(Abbruch)|
+#### 2. Populationsgröße 500
+|Schwierigkeit|gelöst (%)|durchschnittliche Zeit|durchschnittliche Generationen|durchschnittliche Zeit(Abbruch)|
 |:-:|:-:|:-:|:-:|:-:|
 |Leicht|100|4662|5.6|-|
 |Mittel|90|13222|11|35048|
 |Schwer|50|25979|32,4|53385|
 |Experte|0|0|0|51216|
 
-#### 3. Populationgröße 1000
-|Schwierigkeit|gelöst (%)|durschnittliche Zeit|durschnittliche Generationen|durschnittliche Zeit(Abbruch)
+#### 3. Populationsgröße 1000
+|Schwierigkeit|gelöst (%)|durchschnittliche Zeit|durchschnittliche Generationen|durchschnittliche Zeit(Abbruch)
 |:-:|:-:|:-:|:-:|:-:|
 |Leicht|100|9208|5.3|-|
 |Mittel|100|24384|14.8|-|
 |Schwer|60|43039|25.5|87460|
 |Experte|20|91698|54,5|123294|
 
-#### 4. Populationgröße 5000
-
-(Genaugenommen sind Populationsgrößen so angepasst, dass sie für das Crossover durch 3 teilbar sind, also 102,501,1002)
 </details>
 
 <details>
-  <summary>5. GUI</summary>
-  
-  Das [GUI](GUI/GUI.py) nutzt die oben beschriebenden Methoden um grafisch den Prozess der Lösung zu zeigen. Zunächst wird Populationsgröße und Sudokuauswahl abgefragt. 
-  Anschließend wird das Sudoku angezeigt. Dabei werden ursprünglich gegebene Felder grün und Felder mit Kollisionen rot markiert. 
-  Es werden auch die Anzahl an Generationen und die Gesamtzahl an Kollisionen gezeigt. Über den Parameter Schrittweite kann eingestellt werden, wie viele Generationen pro Schritt berechnet werden sollen.
-  Mit dem Button "Schritt" wird dann die entsprechende Anzahl an Generationen berechnet und das beste Individuum angezeigt.
+<summary>5. GUI</summary>
+<details>
+<summary>5.1 Implementierung</summary>
+Um die GUI zu implementieren wurde das Python-Modul pygame verwendet. 
+Dabei wurde ein Startbildschirm, sowie der Simulationsbildschirm implementiert. Neben dem selbst gezeichneten Sudoku Feld und Knöpfen, sowie Eingabefeldern wurde auch ein Graph implementiert, der den Verlauf der Fitness über die Generationen anzeigt.
+
+Für jeden Simulationsschritt wird die in C++ definierte Methode
+mit entsprechenden Übergabewerten aufgerufen. Die Rückgabewerte werden dann in der GUI verarbeitet und angezeigt.
+
+Um eine eigenständige Anwendung zu generieren wurde anschließend mit pyinstaller eine ausführbare Datei erstellt, welche alle benötigten Dateien enthält.
+
+</details>
+<details>
+<summary>5.2 Anwendung</summary>
+
+Das GUI nutzt die oben beschriebenden Methoden um grafisch den Prozess der Lösung zu zeigen. 
+Sie kann über die ausführbare Datei [GUI](GUI) oder das Python-Script [GUI.py](Code/GUI.py) gestartet werden.
+Für die Ausführung mit Python sind dabei das mitglieferte [Sudoku cpython Modul](Code/Sudoku.cpython-310-x86_64-linux-gnu.so) sowie matplotlib und pygame erforderlich.
+
+Zunächst wird Populationsgröße und Sudokuauswahl abgefragt. 
+Empfehlenswert sind Werte, die sich an der obigen Auswertung orientieren.
+Die verschiedenen ungelösten Sudokus in aufbearbeiteter Form können dabei in der Datei [Sudokus](Sudokus) gefunden werden (0 = leeres Feld).
+
+Anschließend wird das Sudoku angezeigt. Dabei werden ursprünglich gegebene Felder grün und Felder mit Kollisionen rot markiert. 
+Es werden auch die Anzahl an Generationen und die Gesamtzahl an Kollisionen im besten Sudoku dieser Generation gezeigt. Weiterhin werden in einem Graph die Best- und Durchschnittswerte der Generationen angezeigt.
+
+Über den Parameter Schrittweite kann eingestellt werden, wie viele Generationen pro Schritt berechnet werden sollen. 
+Mit dem Button "Schritt" wird dann die entsprechende Anzahl an Generationen berechnet und das beste Individuum, sowie der Verlauf der Fitness angezeigt. Dabei kann es bei höheren Generationzahlen (>500) durchaus zu längeren Wartezeiten kommen.
+
+In der Simulation werden dabei die oben empirisch ermittelten Bestwerte, also diagonales Crossover und die triviale Selektion verwendet. Die Selektionsrate kann zwischen jedem Schritt angepasst werden.
+
+Ein zwingedes Abbruchkriterium ist nicht definiert. Vielmehr kann der Nutzer anhand der angezeigten durchschnittlichen Fitness der jeweiligen Generationen selbst entscheiden.
+
+Über "Reset" kann zum Startbildschirm zurückgekehrt werden.
+"0. Gen" setzt die Simulation mit gleicher Populationsgröße und gleichem Sudoku zurück und schafft eine neue Startpopulation.
 </details>
