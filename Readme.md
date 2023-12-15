@@ -136,7 +136,7 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 ![GUI](Pictures/GUI.png)
 
 Das GUI nutzt die oben beschriebenen Methoden um grafisch den Prozess der Lösung zu zeigen. 
-Sie kann mit Debian über [GUI.sh](GUI.sh) und mit Windows über [GUI.bat](GUI.bat) gestartet werden.
+Sie kann mit Debian über [GUI.sh](GUI.sh) gestartet werden.
 Vorraussetung ist Python. Die Module matplotlib und pygame werden über pip installiert.
 
 Zunächst wird Populationsgröße und Sudokuauswahl abgefragt. 
