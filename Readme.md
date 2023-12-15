@@ -90,7 +90,7 @@ Für die Nutzung ohne GUI steht die Funktion testcase bereit, bei der eine Menge
 </details>
 
 <details>
-<summary>5. GUI</summary>
+<summary>4. GUI</summary>
 
 Um die GUI zu implementieren wurde das Python-Modul pygame verwendet. 
 Dabei wurde ein Startbildschirm, sowie der Simulationsbildschirm implementiert. Neben dem selbst gezeichneten Sudoku Feld und Knöpfen, sowie Eingabefeldern wurde auch ein Graph implementiert, der den Verlauf der Fitness über die Generationen anzeigt.
