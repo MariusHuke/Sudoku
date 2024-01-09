@@ -10,7 +10,7 @@ Im Datensatz der hier zu lösenden Sudokus befinden sich hauptsächlich 9x9 Sudo
 In [Sudoku.hpp](Code/Sudoku.hpp) wird die Klasse Sudoku definiert. Diese enthält neben Daten zur Gesamtgröße auch öfter verwendete Teilgrößen wie die Größe eines Blocks oder die Anzahl der Blöcke. Die Zahlen des Sudokus sind für einfacheren Zugriff in 2 verschiedenen Datenstrukturen gespeichert, die beide Zugriff auf 
 die gleichen shared_ptr haben. Dabei ist die row_representation ein fortgehender 1D-Vektor, der die Reihen hintereinander speichert. Die grid_representation
 ist ein 2D-Vektor, der in der ersten Dimension die Blöcke und in der zweiten Dimension die Reihen innerhalb der Blöcke speichert. Neben dem Standardkonstruktor werden auch ein Copy-Konstruktor, welcher eine tiefe Kopie erstellt und ein Size-Konstruktor, welcher ein mit Nullen gefülltes Sudoku der gegebenen Größe erstellt, implementiert. Bei jedem Konstruktor wird automatisch auch die grid_representation erstellt.
-Es stehen außerdem Getter- ,Setter- sowie Ausgabefunktionen bereit.
+Es stehen außerdem Getter-,Setter- sowie Ausgabefunktionen bereit.
 
 Weiterhin ist die Klasse generisch implementiert, sodass sowohl float, als auch int Datentypen verwendet werden können. Die float Variante ist für das Berechnen von individuellen Fitnessbewertungen wichtig.
 </details>
@@ -33,7 +33,7 @@ Daher werden die wenigen Felder, für die sich keine Kandidaten in linearer Lauf
 <details>
   <summary>2.2 Crossover</summary>
 
-Für die Crossover Operation wird eine Operation definiert, die einen Wert n bekommt. Getauscht werden die n-1 Reihen von Blöcken jedes Eltern mit n-1 Reihen des anderen. Wird also auf ein 9x9-Sudoku Crossover von 3 angewendet, werden auch 3 Eltern benötigt. 
+Für die Crossover Operation wird eine Operation definiert, die einen Wert n bekommt. Getauscht werden die n-1 Reihen von Blöcken jedes Elternteils mit n-1 Reihen des anderen. Wird also auf ein 9x9-Sudoku Crossover von 3 angewendet, werden auch 3 Eltern benötigt. 
 Ein sinnvoller Spezialfall für 9x9-Sudokus ist dabei Crossover(2), bei dem nur die mittlere Reihe des einen Eltern durch die des anderen getauscht wird.
 Auch wenn theoretisch mehr Möglichkeiten bestehen bietet die Klasse nur das 2-Punkt-Crossover (Crossover(2)) und das diagonale Crossover(Crossover(3)) nach außen an.
 
@@ -52,13 +52,13 @@ Zu beachten ist das die durch diese Methoden berechnete Fitness möglichst niedr
 
 Für die Selektion existieren 2 Möglichkeiten.
 1. Ordnung der Individuen nach ihrer Fitness und auswählen dann der besten n (abhängig von der gewählten keeping_percentage) Individuen aus.
-2. Stochastic-Universal-Sampling: Normalisiert alle Fitnesswerte durch MinMax-Normalisierung und zieht diese vom Maximum ab, sodass der niedrigste Wert der schlechtesten Fitness entspricht. Bildet dann ein Roulette-Rad, wobei der Wert jedes Elementes dem Anteil auf dem Rad entspricht. Dann wird ein zufälliger Startpunkt zwischen 0 und 1 gewählt und von diesem aus werden in Schritten, deren Größe von der keeping_percentage abhängt, die Individuen solange ausgewählt, bis man wieder am Startpunkt ist und somit die gewünschte Populationsgröße erreicht hat.
+2. Stochastic-Universal-Sampling: Normalisiert alle Fitnesswerte durch MinMax-Normalisierung und zieht diese vom Maximum ab, sodass der niedrigste Wert der schlechtesten Fitness entspricht. Bildet dann ein Roulette-Rad, wobei der Wert jedes Elementes dem Anteil auf dem Rad entspricht. Dann wird ein zufälliger Startpunkt zwischen 0 und 1 gewählt und von diesem aus werden in Schritten, deren Größe von der keeping_percentage abhängt, die Individuen so lange ausgewählt, bis man wieder am Startpunkt ist und somit die gewünschte Populationsgröße erreicht hat.
 </details>
 
 <details>
   <summary>2.4 Mutation</summary>
 
-Die Mutation nutzt den fitness_sudoku Vektor. Dabei wird für jedes Feld geschaut ob dieses einen Fitnesswert > 1 hat. Ist dies der Fall wird die Position in eine Liste swaps eingefügt. Weiterhin werden auch Felder mit Fitnesswert 0 mit einer Wahrscheinlichkeit von 1/9 eingefügt. Diese Liste wird zufällig gemischt und Felder werden in Paaren vertauscht. Sollte ein Feld übrig bleiben wird es einfach wieder an seinen Platz zurückgeschrieben.
+Die Mutation nutzt den fitness_sudoku Vektor. Dabei wird für jedes Feld geschaut ob dieses einen Fitnesswert > 1 hat. Ist dies der Fall, wird die Position in eine Liste swaps eingefügt. Weiterhin werden auch Felder mit Fitnesswert 0 mit einer Wahrscheinlichkeit von 1/9 eingefügt. Diese Liste wird zufällig gemischt und Felder werden in Paaren vertauscht. Sollte ein Feld übrig bleiben wird es einfach wieder an seinen Platz zurückgeschrieben.
 </details>
 
 <details>
@@ -135,13 +135,13 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 
 ![GUI](Pictures/GUI.png)
 
-Das GUI nutzt die oben beschriebenen Methoden um grafisch den Prozess der Lösung zu zeigen. 
+Das GUI nutzt die oben beschriebenen Methoden, um grafisch den Prozess der Lösung zu zeigen. 
 Sie kann mit Debian über [GUI.sh](GUI.sh) und mit Windows über [GUI.bat](GUI.bat) gestartet werden.
 Vorraussetung ist Python. Die Module matplotlib und pygame werden über pip installiert.
 
 Zunächst wird Populationsgröße und Sudokuauswahl abgefragt. 
 Empfehlenswert sind Werte, die sich an der obigen Auswertung orientieren.
-Die verschiedenen ungelösten Sudokus in aufbearbeiteter Form können dabei in der Datei [Sudokus](Sudokus.txt) gefunden werden (0 = leeres Feld).
+Die verschiedenen ungelösten Sudokus in aufgearbeiteter Form können dabei in der Datei [Sudokus](Sudokus.txt) gefunden werden (0 = leeres Feld).
 
 Anschließend wird das Sudoku angezeigt. Dabei werden ursprünglich gegebene Felder grün und Felder mit Kollisionen rot markiert. 
 Es werden auch die Anzahl an Generationen und die Gesamtzahl an Kollisionen im besten Sudoku dieser Generation gezeigt. Weiterhin werden in einem Graph die Best- und Durchschnittswerte der Generationen angezeigt.
