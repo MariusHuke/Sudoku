@@ -90,7 +90,7 @@ Für die Nutzung ohne GUI steht die Funktion testcase bereit, bei der eine Menge
 </details>
 
 <details>
-<summary>5. GUI</summary>
+<summary>4. GUI</summary>
 
 Um die GUI zu implementieren wurde das Python-Modul pygame verwendet. 
 Dabei wurde ein Startbildschirm, sowie der Simulationsbildschirm implementiert. Neben dem selbst gezeichneten Sudoku Feld und Knöpfen, sowie Eingabefeldern wurde auch ein Graph implementiert, der den Verlauf der Fitness über die Generationen anzeigt.
@@ -108,23 +108,23 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 
 #### 1. Populationsgröße 100
 
-|Schwierigkeit|gelöst (%)|durchschnittliche Zeit|durchschnittliche Generationen|durchschnittliche Zeit(Abbruch)|
+|Schwierigkeit|gelöst (%)|durchschnittliche Zeit (ms)|durchschnittliche Generationen|durchschnittliche Zeit(Abbruch) (ms)|
 |:-:|:-:|:-:|:-:|:-:|
 |Leicht|100|1102|7.2|-|
 |Mittel|60|2721|18.8|6381|
-|Schwer|0|0|9412|
-|Experte|0|0|9583|
+|Schwer|0|-|32.3|9412|
+|Experte|0|-|33.4|9583|
 
 #### 2. Populationsgröße 500
-|Schwierigkeit|gelöst (%)|durchschnittliche Zeit|durchschnittliche Generationen|durchschnittliche Zeit(Abbruch)|
+|Schwierigkeit|gelöst (%)|durchschnittliche Zeit (ms)|durchschnittliche Generationen|durchschnittliche Zeit(Abbruch) (ms)|
 |:-:|:-:|:-:|:-:|:-:|
 |Leicht|100|4662|5.6|-|
 |Mittel|90|13222|11|35048|
 |Schwer|50|25979|32,4|53385|
-|Experte|0|0|0|51216|
+|Experte|0|-|40.1|51216|
 
 #### 3. Populationsgröße 1000
-|Schwierigkeit|gelöst (%)|durchschnittliche Zeit|durchschnittliche Generationen|durchschnittliche Zeit(Abbruch)
+|Schwierigkeit|gelöst (%)|durchschnittliche Zeit (ms)|durchschnittliche Generationen|durchschnittliche Zeit(Abbruch) (ms)|
 |:-:|:-:|:-:|:-:|:-:|
 |Leicht|100|9208|5.3|-|
 |Mittel|100|24384|14.8|-|
@@ -136,7 +136,7 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 ![GUI](Pictures/GUI.png)
 
 Das GUI nutzt die oben beschriebenen Methoden, um grafisch den Prozess der Lösung zu zeigen. 
-Sie kann mit Debian über [GUI.sh](GUI.sh) und mit Windows über [GUI.bat](GUI.bat) gestartet werden.
+Sie kann mit Debian über [GUI.sh](GUI.sh) gestartet werden.
 Vorraussetung ist Python. Die Module matplotlib und pygame werden über pip installiert.
 
 Zunächst wird Populationsgröße und Sudokuauswahl abgefragt. 
