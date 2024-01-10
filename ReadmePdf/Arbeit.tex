@@ -1,0 +1,148 @@
+\documentclass[fontsize=11pt, DIV=calc]{scrartcl} % Klasse der Bibliothek KOMAscript
+\usepackage[T1]{fontenc}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel} % typografische Regeln für die neue deutsche Rechtschreibung
+\usepackage{float}
+\usepackage{listings,lstautogobble} % Code-Listings
+\usepackage{lmodern} % verändert die Schriftart
+\usepackage{enumitem} % ermöglicht die Anpassung von Aufzählungszeichen
+\usepackage{geometry} % kann die Maße eines Dokumentes festlegen. Hier nur für Titelseite genutzt. Um alle anderen Maße kümmert sich KOMAscript!
+\usepackage{graphicx} % zeigt Bilder schon vor der Compillierung
+\usepackage{url}
+\usepackage{xcolor} % kann Textfarben festlegen
+\usepackage{csquotes}
+
+\usepackage{amssymb} %mathematische Schreibweisen
+\usepackage{amsmath}
+
+\usepackage{biblatex} % kann Literaturverzeichnis erstellen (chem-angew) als alternative Zitationsweise
+
+%%%%%%%%%%%%%%%Bibliography%%%%%%%%%%%%%%%%%%
+%\addbibresource{Ausarbeitung/bibliography.bib} % Bibliographie
+%%%%%%%%%%%%%%%Bibliography%%%%%%%%%%%%%%%%%%
+
+
+\recalctypearea % berechnet den Satzspiegel neu. Muss am Ende der Präambel stehen. Neue Pakete bitte oberhalb dieser Zeile eintragen (dieser Befehl gehört zu KOMAscript bzw. dessen typearea-Paket)
+
+%%%%%%%%%%%%%%%Colouring, Abstände usw.%%%%%%%%%%%%%%%%
+\setlength{\parindent}{0.5cm}
+\topmargin -1.0cm
+\oddsidemargin 0cm
+\evensidemargin 0cm
+\setlength{\textheight}{23.37cm}
+\setlength{\textwidth}{15.24cm}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\setlength{\abovecaptionskip}{1pt} % Chosen fairly arbitrarily
+\lstdefinestyle{mystyle}{ % Definition des Styles für Listings
+    backgroundcolor=\color{white},   %replaced with white instead of backcolour
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    autogobble=true,
+}
+\lstset{style=mystyle}
+
+%%%%%%%%%%%%%%%%Titel%%%%%%%%%%%%%%%%%%%%%
+\hypersetup{
+	pdftitle={PDFTitle},
+	pdfauthor={Huke, Marius},
+	pdfborder={0 0 0},
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black,
+}
+
+% TODO-Command {\todo}
+% Arg 1: Text der angezeigt werden soll
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{TODO:} #1}}
+% Section -Referenz
+% Arg 1: Farbe des Links (optional, default: cyan)
+% Arg 2: Label der zu verlinkenden Section
+% Arg 3: Text des Links
+\newcommand{\colorref}[3][cyan]{\hyperref[#2]{\textcolor{#1}{#3}}}
+
+% Listing-Referenz
+% Arg 1: Label des zu verlinkenden listings
+% Arg 2: Text des Links
+\newcommand{\nameref}[2]{\hyperref[#1]{\underline{#2}}}
+
+
+\begin{document}
+    %%%%%%%%%%%%%%%%%%%%%%%%Titelseite%%%%%%%%%%%%%%%%%%%%%%%%
+    \iffalse
+    \begin{titlepage}
+        \newgeometry{textwidth=15cm, textheight=24cm}
+        
+        \begin{minipage}[b]{0.625\textwidth}
+          Technische Universität Ilmenau\\
+          \\
+          Fachgebiet Datenbanken und Informationssysteme
+        \end{minipage}%
+        \hfill
+        \begin{minipage}[b]{0.375\textwidth}
+          \begin{flushright}
+            \includegraphics[width=\textwidth]{Ausarbeitung/pictures/tu_logo.jpg}
+          \end{flushright}
+        \end{minipage}
+        \vspace*{12\baselineskip}
+        
+        \begin{centering}
+        {\huge \textbf{User Defined Functions in Graphdatenbanken}}\\
+        \vspace*{1\baselineskip}
+        
+        {\large \textbf{Proseminar im Wintersemester 2022 / 2023}}\\
+        \vspace*{7\baselineskip}
+        \begin{center}
+            \large
+            %%%%% HIER GRUPPENMITGLIEDER EINTRAGEN %%%%%
+            \begin{tabular}{cc}
+                Marius Huke & 62889\\
+            \end{tabular}
+        \end{center}
+        \vspace{1.5cm}
+        \begin{center}
+            \begin{tabular}{c}
+                 \textbf{Betreuer} \\
+                 Betreuer
+            \end{tabular}
+        \end{center}
+        \end{centering}
+        
+        \restoregeometry
+    \end{titlepage}
+    % Inhaltsverzeichnis
+    \tableofcontents
+    \thispagestyle{empty} % entfernt Seitenzahl auf dieser Seite
+    \pagebreak % Seitenumbruch
+    \fi
+
+    %%%%%%%%%%%%%%%%%%%%%Input of sections%%%%%%%%%%%%%%%%%%%%%%%%
+    \input{Readme.tex}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%Bibliography%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %Bibliography
+    %\newpage
+    %printbibliography
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%Anhang%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %\newpage
+    %\input{Ausarbeitung/06-Anhang.tex}
+\end{document}

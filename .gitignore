@@ -1,7 +1,14 @@
 /data/
 GUI
 # Ignore the entire folder
-/ReadmePdf/
+/ReadmePdf/*
+/Vortrag/*
 
 # Include .tex and .pdf files within the excluded folder
 !/ReadmePdf/*.tex
+!/ReadmePdf/*.pdf
+!/Vortrag/*.tex
+!/Vortrag/Vortrag.pdf
+!/Vortrag/Vortrag.tex
+!/Vortrag/Ausarbeitung/
+!/Vortrag/Pictures/
