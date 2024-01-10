@@ -1,1 +1,7 @@
 /data/
+GUI
+# Ignore the entire folder
+/ReadmePdf/
+
+# Include .tex and .pdf files within the excluded folder
+!/ReadmePdf/*.tex
