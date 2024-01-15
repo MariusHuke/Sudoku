@@ -1,0 +1,35 @@
+Vortstellung Sudoku mit Evolutionärem Algorithmus
+Gliederung:
+- Zunächst einzelne Bestandteile vorstellen, dann Zusammensetzung zeigen
+
+Allgemeines:
+- Standard: 9x9 Gitter mit Zahlen von 1-9
+- s. hier
+- Spalten, Reihen und Blöcke so ausfüllen das jede Zahl genau einmal
+- verschiedene Schwioerigkeitsgrade (abhängig von Anzhal gegebender Felder)
+- andere Varianten wie 25x25 (kann auch gelöst werden)
+- Algorithmus in C++ geschrieben mit Python Gliederung
+
+Kodierung:
+- 2 repräsentationen (je nach Operation 1 leichter)
+- leere Felder werden mit 0 initialisiert
+- Verwenden shared pointer 
+--> Änderung in einer bewirkt auch Änderung in anderer
+- row_representation: 1D-Vektor mit reihenweiser Speicherung
+- grid_representation: 2D-Vektor:
+- speichert Blöcke reihenweise ab
+
+Initialisierung:
+- generell: Invariante: niemals Duplikate in Blöcken (deswegen grid_representation)
+- gelb möglich (auch wenn 5 z.B. mit 5)
+- grün unmöglich wegen 2*2
+- 2 Methoden der Initialisierung: 
+1. zufällig mit Beachtung der Invariante 
+2. - möglichst auch auf Reihen oder Spalten achten
+   - wenn nicht möglich: einfach zufällig 
+
+Fitnessberechnung:
+- Berechnung der Kollisionen für jedes Feld (gelb)
+--> Speichern eines Sudokus mit Fitnesswerten (s. 1. Block)
+- Gesamtfitness ist Summe der einzelnen Kollisionen
+- 

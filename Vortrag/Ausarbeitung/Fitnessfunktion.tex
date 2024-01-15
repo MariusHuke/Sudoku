@@ -1,4 +1,3 @@
-\section{Fitnessfunktion}
 \begin{frame}{Fitnessberechnung}
     \begin{columns}[T] % T aligns the tops of the columns
         \begin{column}{0.75\textwidth}
@@ -6,15 +5,11 @@
         \end{column}
         \begin{column}{0.35\textwidth}
             \begin{itemize}
-                \item Kollisionszahl als Fitnesswert (=86)
-                \item Speicherung individueller Werte für Zellen \\
+                \item Berechnen der individuellen Kollisionen
+                \item Anlegen eines "{}Fitness-Sudokus{}" zur Speicherung der Werte \(\rightarrow\) Mutation \\
                 (s. Block 0)
-            \end{itemize}
-            Andere Idee für Fitnessberechnung:
-            \begin{itemize}
-                \item \(|\sum_{i=0}^{9}i-\sum_{i=0}^{9}x_{ij}|\) (Zeile0 \(\rightarrow\) 3)
-                \item \(|9!-\prod_{i=0}^{9}x_{ij}|\) (Zeile0 \(\rightarrow\) 222912)
-                \item \(|\{1,2,...,9\}\setminus \{x_{0j},x_{1j},...,x_{8j}\}|\) (Zeile0 \(\rightarrow\) 3)
+                \item Kollisionszahl als Fitnesswert (=86)
+                \item 0 als Idealwert entspricht gelöstem Sudoku
             \end{itemize}
         \end{column}
     \end{columns}

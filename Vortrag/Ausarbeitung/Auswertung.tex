@@ -1,0 +1,53 @@
+\begin{frame}{Auswertung}
+    Test auf 40 Sudokus (10 aus jeder Schwierigkeitsstufe 
+    (Leicht, Mittel, Schwer, Extrem)):
+    \newline
+    \newline
+    \textbf{Populationsgröße 100:}
+    \newline
+    \newline
+    \scalebox{0.7}{
+        \begin{tabular}[width=0.7\textwidth]{c|c|c|c|c}
+            Schwierigkeit & gelöst (\%) & durchschnittliche & durchschnittliche & durchschnittliche  \\
+            & & Zeit (ms) & Generationen & Zeit(Abbruch) (ms)\\
+            \hline
+            Leicht & 100 & 1102 & 7.2 & - \\
+            Mittel & 60 & 2721 & 18.8 & 6381 \\
+            Schwer & 0 & - & 32.3 & 9412 \\
+            Experte & 0 & - & 33.4 & 9583 \\
+        \end{tabular}
+    }
+    \newline
+    \newline
+    \newline
+    \textbf{Populationsgröße 500:}
+    \newline
+    \newline
+    \scalebox{0.7}{
+        \begin{tabular}{c|c|c|c|c}
+            Schwierigkeit & gelöst (\%) & durchschnittliche & durchschnittliche & durchschnittliche  \\
+             & & Zeit (ms) & Generationen & Zeit(Abbruch) (ms)\\
+            \hline
+            Leicht & 100 & 4662 & 5.6 & - \\
+            Mittel & 90 & 13222 & 11 & 35048 \\
+            Schwer & 50 & 25979 & 32,4 & 53385 \\
+            Experte & 0 & - & 40.1 & 51216 \\
+        \end{tabular}
+    }
+\end{frame}
+\begin{frame}{Auswertung}
+    \textbf{Populationsgröße 1000:}
+    \newline
+    \newline
+    \scalebox{0.7}{
+    \begin{tabular}{c|c|c|c|c}
+        Schwierigkeit & gelöst (\%) & durchschnittliche & durchschnittliche & durchschnittliche  \\
+         & & Zeit (ms) & Generationen & Zeit(Abbruch) (ms)\\
+        \hline
+        Leicht & 100 & 9208 & 5.3 & - \\
+        Mittel & 100 & 24384 & 14.8 & - \\
+        Schwer & 60 & 43039 & 25.5 & 87460 \\
+        Experte & 20 & 91698 & 54,5 & 123294 \\
+    \end{tabular}
+    }
+\end{frame}

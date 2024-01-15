@@ -1,1 +1,23 @@
-\section{Selektion}
+\begin{frame}{Selektion}
+    \begin{columns}[T] % T aligns the tops of the columns
+        \begin{column}{0.4\textwidth}
+            \textbf{Elitismus:}
+            \begin{itemize}
+                \item Wahl der besten x-Prozent der Individuen
+                \item Vorteil: schnelles Erreichen des (lokalen) Minimums
+                \item Nachteil: eventuell globales Minimum schwerer zu erreichen
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.6\textwidth}
+            \textbf{Glücksradauswahl (universelles Stitchprobenziehen):}
+            \begin{itemize}
+                \item Skalierung der Fitness, sodass die Summe der
+                Fitnesswerte 1 ergibt
+                \item hintereinander reihen der Individuen mit ihren Fitnesswerten
+                \item Auswahl von Individuen in gleichmäßigen Abständen (angepasst an Selektionsrate)
+                \item Vorteil: höhere Diversität
+                \item Nachteil: langsamere Konvergenz
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
