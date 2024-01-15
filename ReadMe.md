@@ -120,7 +120,7 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 |:-:|:-:|:-:|:-:|:-:|
 |Leicht|100|4662|5.6|-|
 |Mittel|90|13222|11|35048|
-|Schwer|50|25979|32,4|53385|
+|Schwer|50|25979|32.4|53385|
 |Experte|0|-|40.1|51216|
 
 #### 3. Populationsgröße 1000
@@ -129,7 +129,7 @@ Die Auswirkungen der unterschiedlichen Populationsgrößen sind dabei wie folgt:
 |Leicht|100|9208|5.3|-|
 |Mittel|100|24384|14.8|-|
 |Schwer|60|43039|25.5|87460|
-|Experte|20|91698|54,5|123294|
+|Experte|20|91698|54.5|123294|
 
 ## Anwendung
 

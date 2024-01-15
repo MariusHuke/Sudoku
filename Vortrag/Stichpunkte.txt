@@ -8,7 +8,7 @@ Allgemeines:
 - Spalten, Reihen und Blöcke so ausfüllen das jede Zahl genau einmal
 - verschiedene Schwioerigkeitsgrade (abhängig von Anzhal gegebender Felder)
 - andere Varianten wie 25x25 (kann auch gelöst werden)
-- Algorithmus in C++ geschrieben mit Python Gliederung
+- Algorithmus in C++ geschrieben mit Python pygame GUI
 
 Kodierung:
 - 2 repräsentationen (je nach Operation 1 leichter)
@@ -30,6 +30,65 @@ Initialisierung:
 
 Fitnessberechnung:
 - Berechnung der Kollisionen für jedes Feld (gelb)
---> Speichern eines Sudokus mit Fitnesswerten (s. 1. Block)
+--> Speichern eines Sudokus mit Fitnesswerten (s. 1. Block) (später bei Mutation gebraucht)
 - Gesamtfitness ist Summe der einzelnen Kollisionen
-- 
+- 0 ist also Idealwerte (gelöst)
+
+Selektion:
+- 2 Verfahren implementiert:
+Elitismus: Verwendung der besten x-Prozent (Zum gewählten Wert später mehr)
+   - erreicht schnell lokales, vielleicht aber nicht das globale Minimum
+universelles Stichprobenziehen:
+   - Anordnung der Fitnesswerte auf Glpcksrad nach Skalierung 
+   - Auswöhlen eines Startpunktes und Wählen in immergleichem Abstand, sodass genug Elemente 
+   geählt wurden
+   - höhere Diversität aber langsamere Konvergenz
+
+Mutation:
+- blockweise Mutation
+- nutzung der oben gespeicherten Fitnesswerte
+- gesetzte Blöcke (grün) bleiben, 
+   kollidierende (gelb) werden ausgewählt,
+   nicht kollidierende, nicht gesetzt (weiß) mit festlegbarer Chance gewählt
+   --> höher mehr Exploration, weniger mehr Exploitation
+   (später mehr zum gewählten Wert)
+- zufälliges Auswählen und Tauschen von Zweierpaaren
+- übrige Werte werden an Originalposition zurückgeschrieben
+
+Crossover:
+- 2 Methoden:
+   - 2-Punkt-Crossover:
+      - 2 Eltern benötigt
+      - Jeder Elter tauscht seine mittlere Reihe mit der des anderen
+   - Diagonales Crossover:
+      - 3 Eltern benötigt
+      - Kinder bestehen aus jeweils einer Blockreihe der Eltern
+- bei beiden Methoden bleibt Invariante (keine Blockkollisionen) bestehen
+- dadurch das nur Blockreihen vertauscht werden auch kein Einfluss auf Kollisionen in Reihen
+
+Zusammensetzung:
+- generell: Beim Testen oft lokales Minimum erreicht (vllt. sehen wirs im Beispiel)
+- Methode, die Sudokus mit gleichen Elementen wie andere bestraft --> erfolglos 
+- Initialisierung: Kaum Einfluss auf Laufzeit (außer weniger Kollision zu Beginn)
+--> Ohne auf Reihen zu achten, da effizienter
+- Fitnessberechnung 
+- Selektion:
+   - universelles Stichprobenziehen konvergierte sehr langsam und nicht viel erfolgreicher
+   - eventuell nicht passend zu den Crossover-Varianten, da Eltern zu verschieden
+   - 20% Selektionsrate als empirisch bester Wert
+- Mutation 
+   - 1/9 Wahrscheinlichkeit für nicht kollidierende Felder (ab 3/9 keine Konvergenz mehr)
+- Crossover
+   - diagonales: mehr Diversität, wenn auch langsamere Konvergenz
+- Abbruchkireterium: Wann ist bester Populationswert = durchschnitt
+--> 30 Generationen, d.h. nach ca. 25 kann abgebrochen werden
+
+Auswertung:
+- größter Indikator für Erfolg ist Populationsgröße (da mehr Exploration)
+- Tests in Abhängigkeit
+- Test auf 40 Sudokus (leicht bis extrem)
+- Werte nur Richtung, 10 Sudokus als Testbasis nicht aussagekräftig genug
+
+--> GUI
+- Definition wie oben Zusammensetzung, aber kein Abbruchkriterium
+- GUI erkläten und starten
