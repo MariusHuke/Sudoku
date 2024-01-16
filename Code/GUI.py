@@ -4,7 +4,7 @@ import Sudoku
 import os
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg
-#compiled with pyinstaller --onefile --hidden-import=pygame --add-data='Sudoku.cpython-310-x86_64-linux-gnu.so:.' --add-data='testdata.txt:.' GUI.py 
+# compiled with pyinstaller --onefile --hidden-import=pygame --add-data='Sudoku.cpython-310-x86_64-linux-gnu.so:.' --add-data='testdata.txt:.' GUI.py 
 # Initialize Pygame
 pygame.init()
 

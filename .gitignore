@@ -3,6 +3,7 @@ GUI
 # Ignore the entire folder
 /ReadmePdf/*
 /Vortrag/*
+/Bedienungsanleitung/*
 
 # Include .tex and .pdf files within the excluded folder
 !/ReadmePdf/*.tex
@@ -13,3 +14,4 @@ GUI
 !/Vortrag/Ausarbeitung/
 !/Vortrag/Pictures/
 !/Vortrag/Stichpunkte.txt
+!/Bedienungsanleitung/*.tex
