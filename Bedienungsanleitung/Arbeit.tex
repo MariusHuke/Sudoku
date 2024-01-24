@@ -86,54 +86,6 @@
 
 
 \begin{document}
-    %%%%%%%%%%%%%%%%%%%%%%%%Titelseite%%%%%%%%%%%%%%%%%%%%%%%%
-    \iffalse
-    \begin{titlepage}
-        \newgeometry{textwidth=15cm, textheight=24cm}
-        
-        \begin{minipage}[b]{0.625\textwidth}
-          Technische Universität Ilmenau\\
-          \\
-          Fachgebiet Datenbanken und Informationssysteme
-        \end{minipage}%
-        \hfill
-        \begin{minipage}[b]{0.375\textwidth}
-          \begin{flushright}
-            \includegraphics[width=\textwidth]{Ausarbeitung/pictures/tu_logo.jpg}
-          \end{flushright}
-        \end{minipage}
-        \vspace*{12\baselineskip}
-        
-        \begin{centering}
-        {\huge \textbf{User Defined Functions in Graphdatenbanken}}\\
-        \vspace*{1\baselineskip}
-        
-        {\large \textbf{Proseminar im Wintersemester 2022 / 2023}}\\
-        \vspace*{7\baselineskip}
-        \begin{center}
-            \large
-            %%%%% HIER GRUPPENMITGLIEDER EINTRAGEN %%%%%
-            \begin{tabular}{cc}
-                Marius Huke & 62889\\
-            \end{tabular}
-        \end{center}
-        \vspace{1.5cm}
-        \begin{center}
-            \begin{tabular}{c}
-                 \textbf{Betreuer} \\
-                 Betreuer
-            \end{tabular}
-        \end{center}
-        \end{centering}
-        
-        \restoregeometry
-    \end{titlepage}
-    % Inhaltsverzeichnis
-    \tableofcontents
-    \thispagestyle{empty} % entfernt Seitenzahl auf dieser Seite
-    \pagebreak % Seitenumbruch
-    \fi
-
     %%%%%%%%%%%%%%%%%%%%%Input of sections%%%%%%%%%%%%%%%%%%%%%%%%
     \section*{Bedienungsanleitung}
     \subsection*{Startbildschirm}
@@ -156,7 +108,7 @@
             \item momentane Generation
             \item Summe der Kollisionen des besten Individuums (auch links gezeigt)
             \item Eingabefeld mit Generationen pro Schritt (Wie viele Generationen sollen in einem Schritt berechnet werden?)
-            \\ \textbf{Achtung:} Im Programm ist kein Abbruchkriterium festgelegt.\\ \(\rightarrow\) (empfohlen max. \(25-40\) Generationen)
+            \\ \textbf{Achtung:} Im Programm ist außer der Lösung kein Abbruchkriterium festgelegt.\\ \(\rightarrow\) (empfohlen max. \(25-40\) Generationen)
             \item Eingabefeld mit Selektionsrate (empfohlen 20): Welcher Anteil der Population soll selektiert werden?
             \item Knopf Schritt: Berechnet die gegebende Anzah an Generationen
         \end{itemize}
@@ -167,13 +119,4 @@
             \item 0. Gen: Setzt zurück, erstellt neue Initialpopulation, behält aber Populationsgröße und Sudoku bei
         \end{itemize}
     \end{itemize}
-    
-    %%%%%%%%%%%%%%%%%%%%%%%Bibliography%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %Bibliography
-    %\newpage
-    %printbibliography
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%Anhang%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %\newpage
-    %\input{Ausarbeitung/06-Anhang.tex}
 \end{document}
